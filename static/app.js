@@ -80,6 +80,9 @@
       if (ok) visibleCount++;
     });
     if (emptyState) emptyState.hidden = visibleCount !== 0;
+    // 同步更新列表标题中的可见数量
+    var countEl = document.getElementById("visible-count");
+    if (countEl) countEl.textContent = String(visibleCount);
   }
 
   // 搜索：点按钮或按 Enter 才触发，避免边输入边过滤

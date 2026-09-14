@@ -90,7 +90,7 @@
 
     {# ── 新闻列表 ── #}
     <section class="news-list" aria-label="本日资讯列表">
-      <h2>全部资讯（共 {{ items|length }} 条）</h2>
+      <h2>全部资讯（共 <span id="visible-count">{{ items|length }}</span> 条）</h2>
       <div id="news-container">
         {% for it in items %}
           <article class="news-card" data-source="{{ it.source }}" data-title="{{ it.title }}" data-summary="{{ it.summary }}" data-pub="{{ (it.published_at or '')[:10] }}">
