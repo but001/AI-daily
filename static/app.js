@@ -19,36 +19,89 @@
     document.querySelectorAll("#news-container .news-card")
   );
 
-  // 当前激活的日期范围：today / 7d / all
-  var activeRange = "7d";
-  // 是否首页（首页默认 7d；归档页默认 all）
-  var today = (function () {
-    // 取页面里任意一条卡片的 data-pub 反推"今日"不准；改用 build 时注入的 today
-    var meta = document.querySelector("meta[name='today']");
-    return null;
-  })();
-
-  // 从 URL 或 BODY class 判断是否归档页：归档页没有 date-range 控件
+  // 当前激活的日期段：null = 不筛选；[startDate, endDate] = 闭区间
+  var activeDateRange = null;
+  // 是否有日期段控件
   var hasDateRange = !!dateRange;
 
-  function todayStr() {
-    // 用浏览器本地时区日期；与采集端北京时区一致即可
-    var d = new Date();
-    // 转换为 Asia/Shanghai 近似：东八区时间 = UTC + 8
-    var utc = d.getTime() + d.getTimezoneOffset() * 60000;
-    var bj = new Date(utc + 8 * 3600000);
-    var m = (bj.getMonth() + 1).toString().padStart(2, "0");
-    var day = bj.getDate().toString().padStart(2, "0");
-    return bj.getFullYear() + "-" + m + "-" + day;
+  // 初始化日期段下拉选项
+  function initDatePickers() {
+    if (!dateRange) return;
+    var sy = document.getElementById("date-start-y");
+    var sm = document.getElementById("date-start-m");
+    var sd = document.getElementById("date-start-d");
+    var ey = document.getElementById("date-end-y");
+    var em = document.getElementById("date-end-m");
+    var ed = document.getElementById("date-end-d");
+    if (!sy || !ey) return;
+
+    // 用页面 meta today 注入"今日"，没有则用浏览器本地日期
+    var meta = document.querySelector("meta[name='today']");
+    var todayStr = meta ? meta.content : (function () {
+      var d = new Date();
+      var utc = d.getTime() + d.getTimezoneOffset() * 60000;
+      var bj = new Date(utc + 8 * 3600000);
+      var p = function (n) { return n.toString().padStart(2, "0"); };
+      return bj.getFullYear() + "-" + p(bj.getMonth() + 1) + "-" + p(bj.getDate());
+    })();
+
+    // 年份范围：从卡片数据最早年到今年
+    var minYear = new Date().getFullYear();
+    cards.forEach(function (c) {
+      var p = c.getAttribute("data-pub") || "";
+      if (p) {
+        var y = parseInt(p.slice(0, 4), 10);
+        if (!isNaN(y) && y < minYear) minYear = y;
+      }
+    });
+    var maxYear = new Date().getFullYear();
+
+    function fillYear(sel) {
+      sel.innerHTML = "";
+      for (var y = maxYear; y >= minYear; y--) {
+        var o = document.createElement("option");
+        o.value = y; o.textContent = y;
+        sel.appendChild(o);
+      }
+    }
+    function fillMonth(sel) {
+      sel.innerHTML = "";
+      for (var m = 1; m <= 12; m++) {
+        var o = document.createElement("option");
+        o.value = m; o.textContent = m;
+        sel.appendChild(o);
+      }
+    }
+    function fillDay(sel) {
+      sel.innerHTML = "";
+      for (var d = 1; d <= 31; d++) {
+        var o = document.createElement("option");
+        o.value = d; o.textContent = d;
+        sel.appendChild(o);
+      }
+    }
+    fillYear(sy); fillMonth(sm); fillDay(sd);
+    fillYear(ey); fillMonth(em); fillDay(ed);
+
+    // 默认：起止都是今日
+    var parts = todayStr.split("-");
+    sy.value = parts[0]; sm.value = parseInt(parts[1], 10); sd.value = parseInt(parts[2], 10);
+    ey.value = parts[0]; em.value = parseInt(parts[1], 10); ed.value = parseInt(parts[2], 10);
   }
 
-  function within7d(pubDate) {
-    if (!pubDate) return false;
-    var today = new Date(todayStr() + "T00:00:00");
-    var pub = new Date(pubDate + "T00:00:00");
-    if (isNaN(pub.getTime())) return false;
-    var diff = (today - pub) / 86400000;
-    return diff >= 0 && diff <= 6;
+  // 读取当前下拉值，返回 [startDateStr, endDateStr] 或 null
+  function readDateRange() {
+    var sy = document.getElementById("date-start-y");
+    var ey = document.getElementById("date-end-y");
+    if (!sy || !ey) return null;
+    var sm = document.getElementById("date-start-m");
+    var sd = document.getElementById("date-start-d");
+    var em = document.getElementById("date-end-m");
+    var ed = document.getElementById("date-end-d");
+    function p2(n) { return n.toString().padStart(2, "0"); }
+    var sStr = sy.value + "-" + p2(parseInt(sm.value, 10)) + "-" + p2(parseInt(sd.value, 10));
+    var eStr = ey.value + "-" + p2(parseInt(em.value, 10)) + "-" + p2(parseInt(ed.value, 10));
+    return [sStr, eStr];
   }
 
   function matchCard(card) {
@@ -61,10 +114,10 @@
 
     if (q && title.indexOf(q) === -1 && summary.indexOf(q) === -1) return false;
     if (src && cardSrc !== src) return false;
-    if (hasDateRange) {
-      if (activeRange === "today" && pub !== todayStr()) return false;
-      if (activeRange === "7d" && !within7d(pub)) return false;
-      // 'all' 不筛选
+    // 日期段：闭区间 [start, end]；缺失时间不参与筛选
+    if (activeDateRange) {
+      if (!pub) return false;
+      if (pub < activeDateRange[0] || pub > activeDateRange[1]) return false;
     }
     return true;
   }
@@ -101,17 +154,18 @@
     sourceFilter.addEventListener("change", applyFilters);
   }
 
-  // 日期范围切换
-  if (dateRange) {
-    dateRange.addEventListener("click", function (e) {
-      var btn = e.target.closest("button[data-range]");
-      if (!btn) return;
-      Array.prototype.forEach.call(
-        dateRange.querySelectorAll("button"),
-        function (b) { b.classList.remove("active"); }
-      );
-      btn.classList.add("active");
-      activeRange = btn.getAttribute("data-range");
+  // 日期段：点"应用"才生效；"重置"清空日期筛选
+  var dateApplyBtn = document.getElementById("date-apply");
+  var dateResetBtn = document.getElementById("date-reset");
+  if (dateApplyBtn) {
+    dateApplyBtn.addEventListener("click", function () {
+      activeDateRange = readDateRange();
+      applyFilters();
+    });
+  }
+  if (dateResetBtn) {
+    dateResetBtn.addEventListener("click", function () {
+      activeDateRange = null;
       applyFilters();
     });
   }
@@ -121,15 +175,7 @@
     if (searchInput) searchInput.value = "";
     if (sourceFilter) sourceFilter.value = "";
     if (hotZone) hotZone.classList.remove("hidden");
-    if (dateRange) {
-      Array.prototype.forEach.call(
-        dateRange.querySelectorAll("button"),
-        function (b) { b.classList.remove("active"); }
-      );
-      var defaultBtn = dateRange.querySelector('button[data-range="7d"]');
-      if (defaultBtn) defaultBtn.classList.add("active");
-      activeRange = "7d";
-    }
+    activeDateRange = null;
     applyFilters();
   }
   if (clearBtn) clearBtn.addEventListener("click", clearAll);
@@ -324,6 +370,9 @@
   // 如果当前页是「我的阅读」页（有 reading-list 容器），初始渲染
   if (readingListEl) renderReadingList();
 
-  // 初始：首页默认显示最近7天
+  // 初始化日期段下拉（首页有 date-range 控件时）
+  initDatePickers();
+
+  // 初始：默认不筛选日期，显示全部
   applyFilters();
 })();

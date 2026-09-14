@@ -57,13 +57,25 @@
           </select>
         </label>
         <div class="date-range" role="group" aria-label="日期范围">
-          <button type="button" data-range="today">今天</button>
-          <button type="button" data-range="7d" class="active">最近 7 天</button>
-          <button type="button" data-range="all">全部</button>
+          <select id="date-start-y" aria-label="起始年"></select>
+          <span>年</span>
+          <select id="date-start-m" aria-label="起始月"></select>
+          <span>月</span>
+          <select id="date-start-d" aria-label="起始日"></select>
+          <span>日</span>
+          <span class="date-sep">—</span>
+          <select id="date-end-y" aria-label="结束年"></select>
+          <span>年</span>
+          <select id="date-end-m" aria-label="结束月"></select>
+          <span>月</span>
+          <select id="date-end-d" aria-label="结束日"></select>
+          <span>日</span>
+          <button type="button" id="date-apply" class="search-btn">应用</button>
+          <button type="button" id="date-reset" class="clear-btn">重置</button>
         </div>
         <button type="button" id="clear-filters" class="clear-btn">清除条件</button>
       </div>
-      <p class="range-hint">日期口径：发布时间（按北京时区）；缺失时间不参与今天/7天筛选。最近 {{ recent_days }} 天</p>
+      <p class="range-hint">日期口径：发布时间（按北京时区）；缺失时间不参与日期筛选。</p>
     </section>
 
     {# ── 热点区 ── #}

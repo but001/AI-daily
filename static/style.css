@@ -151,23 +151,30 @@ a:hover { text-decoration: underline; }
 }
 .date-range {
   display: inline-flex;
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  overflow: hidden;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
 }
-.date-range button {
-  border: 0;
+.date-range select {
+  padding: 4px 6px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
   background: #fff;
-  color: var(--text-muted);
-  padding: 6px 12px;
+  color: var(--text);
   font-size: 13px;
   cursor: pointer;
-  border-right: 1px solid var(--border);
 }
-.date-range button:last-child { border-right: 0; }
-.date-range button.active {
-  background: var(--primary);
-  color: #fff;
+.date-range .date-sep {
+  margin: 0 6px;
+  color: var(--text-muted);
+}
+.date-range .search-btn,
+.date-range .clear-btn {
+  margin-left: 6px;
+  padding: 6px 10px;
+}
+.date-range .clear-btn {
+  margin-left: 4px;
 }
 .clear-btn {
   margin-left: auto;

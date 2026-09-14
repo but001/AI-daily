@@ -27,6 +27,14 @@ sources:
     homepage: https://huggingface.co/papers
     enabled: true
 
+  - id: baai_hub
+    name: 智源社区
+    type: rss
+    url: https://hub.baai.ac.cn/rss
+    lang: zh
+    homepage: https://hub.baai.ac.cn
+    enabled: true
+
 # 时区口径说明（README 需对应说明）
 # - published_at: 保留源原时区，存储为 ISO8601 带时区
 # - fetched_at: 采集时刻，UTC
