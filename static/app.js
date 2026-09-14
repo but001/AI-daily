@@ -23,6 +23,8 @@
   var activeDateRange = null;
   // 是否有日期段控件
   var hasDateRange = !!dateRange;
+  // 当前快捷选项模式：'today' | '7d' | '30d' | 'custom'；默认 '7d'
+  var activeQuick = "7d";
 
   // 初始化日期段下拉选项
   function initDatePickers() {
@@ -154,29 +156,150 @@
     sourceFilter.addEventListener("change", applyFilters);
   }
 
-  // 日期段：点"应用"才生效；"重置"清空日期筛选
+  // 主按钮组：今天 / 最近 7 天 / 最近 30 天 / 自定义…
+  var customTrigger = document.getElementById("custom-trigger");
+  var popover = document.getElementById("date-popover");
+
+  function setQuickMode(mode) {
+    activeQuick = mode;
+    // 主按钮组高亮
+    if (dateRange) {
+      Array.prototype.forEach.call(
+        dateRange.querySelectorAll("button[data-quick]"),
+        function (b) { b.classList.remove("active"); }
+      );
+      var cur = dateRange.querySelector('button[data-quick="' + mode + '"]');
+      if (cur) cur.classList.add("active");
+    }
+    // 计算对应日期段
+    activeDateRange = computeQuickRange(mode);
+    applyFilters();
+  }
+
+  // 把快捷模式转成 [start, end] 日期字符串
+  function computeQuickRange(mode) {
+    var meta = document.querySelector("meta[name='today']");
+    var todayStr = meta ? meta.content : (function () {
+      var d = new Date();
+      var utc = d.getTime() + d.getTimezoneOffset() * 60000;
+      var bj = new Date(utc + 8 * 3600000);
+      var p = function (n) { return n.toString().padStart(2, "0"); };
+      return bj.getFullYear() + "-" + p(bj.getMonth() + 1) + "-" + p(bj.getDate());
+    })();
+    var t = new Date(todayStr + "T00:00:00");
+    function fmt(d) {
+      var p = function (n) { return n.toString().padStart(2, "0"); };
+      return d.getFullYear() + "-" + p(d.getMonth() + 1) + "-" + p(d.getDate());
+    }
+    if (mode === "today") {
+      return [todayStr, todayStr];
+    }
+    if (mode === "yesterday") {
+      var y = new Date(t.getTime() - 86400000);
+      var ys = fmt(y);
+      return [ys, ys];
+    }
+    if (mode === "7d") {
+      var s = new Date(t.getTime() - 6 * 86400000);
+      return [fmt(s), todayStr];
+    }
+    if (mode === "30d") {
+      var s30 = new Date(t.getTime() - 29 * 86400000);
+      return [fmt(s30), todayStr];
+    }
+    if (mode === "month") {
+      var first = new Date(t.getFullYear(), t.getMonth(), 1);
+      return [fmt(first), todayStr];
+    }
+    return null;
+  }
+
+  if (dateRange) {
+    dateRange.addEventListener("click", function (e) {
+      var btn = e.target.closest("button[data-quick]");
+      if (!btn) return;
+      setQuickMode(btn.getAttribute("data-quick"));
+      // 切到快捷模式时关闭弹出层
+      if (popover) popover.hidden = true;
+    });
+  }
+
+  // 自定义触发器：开关弹出层
+  if (customTrigger) {
+    customTrigger.addEventListener("click", function () {
+      if (!popover) return;
+      popover.hidden = !popover.hidden;
+    });
+  }
+
+  // 弹出层快捷选项
+  var popoverEl = popover;
+  if (popoverEl) {
+    popoverEl.addEventListener("click", function (e) {
+      var btn = e.target.closest("button[data-pop-quick]");
+      if (!btn) return;
+      var mode = btn.getAttribute("data-pop-quick");
+      var range = computeQuickRange(mode);
+      if (range) {
+        // 把起止日期填入下拉
+        setPickerValue("date-start", range[0]);
+        setPickerValue("date-end", range[1]);
+      }
+    });
+  }
+
+  // 把 "YYYY-MM-DD" 填到下拉组
+  function setPickerValue(prefix, dateStr) {
+    var parts = dateStr.split("-");
+    var y = document.getElementById(prefix + "-y");
+    var m = document.getElementById(prefix + "-m");
+    var d = document.getElementById(prefix + "-d");
+    if (y) y.value = parseInt(parts[0], 10);
+    if (m) m.value = parseInt(parts[1], 10);
+    if (d) d.value = parseInt(parts[2], 10);
+  }
+
+  // 弹出层：确定 = 应用自定义日期段；清除 = 回到默认"最近 7 天"
   var dateApplyBtn = document.getElementById("date-apply");
   var dateResetBtn = document.getElementById("date-reset");
   if (dateApplyBtn) {
     dateApplyBtn.addEventListener("click", function () {
       activeDateRange = readDateRange();
+      activeQuick = "custom";
+      // 主按钮组取消高亮
+      if (dateRange) {
+        Array.prototype.forEach.call(
+          dateRange.querySelectorAll("button[data-quick]"),
+          function (b) { b.classList.remove("active"); }
+        );
+      }
+      if (customTrigger) customTrigger.classList.add("active");
+      if (popover) popover.hidden = true;
       applyFilters();
     });
   }
   if (dateResetBtn) {
     dateResetBtn.addEventListener("click", function () {
-      activeDateRange = null;
-      applyFilters();
+      if (popover) popover.hidden = true;
+      setQuickMode("7d");  // 清除后回到默认"最近 7 天"
     });
   }
 
-  // 清空
+  // 点击弹出层外部关闭
+  document.addEventListener("click", function (e) {
+    if (!popover || popover.hidden) return;
+    if (popover.contains(e.target)) return;
+    if (customTrigger && customTrigger.contains(e.target)) return;
+    popover.hidden = true;
+  });
+
+  // 清空：清除搜索词、来源筛选；日期回到默认"最近 7 天"
   function clearAll() {
     if (searchInput) searchInput.value = "";
     if (sourceFilter) sourceFilter.value = "";
     if (hotZone) hotZone.classList.remove("hidden");
-    activeDateRange = null;
-    applyFilters();
+    if (popover) popover.hidden = true;
+    setQuickMode("7d");
   }
   if (clearBtn) clearBtn.addEventListener("click", clearAll);
   if (linkClear) linkClear.addEventListener("click", clearAll);
@@ -373,6 +496,10 @@
   // 初始化日期段下拉（首页有 date-range 控件时）
   initDatePickers();
 
-  // 初始：默认不筛选日期，显示全部
-  applyFilters();
+  // 初始：默认"最近 7 天"
+  if (dateRange) {
+    setQuickMode("7d");
+  } else {
+    applyFilters();
+  }
 })();

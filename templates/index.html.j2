@@ -57,25 +57,50 @@
           </select>
         </label>
         <div class="date-range" role="group" aria-label="日期范围">
-          <select id="date-start-y" aria-label="起始年"></select>
-          <span>年</span>
-          <select id="date-start-m" aria-label="起始月"></select>
-          <span>月</span>
-          <select id="date-start-d" aria-label="起始日"></select>
-          <span>日</span>
-          <span class="date-sep">—</span>
-          <select id="date-end-y" aria-label="结束年"></select>
-          <span>年</span>
-          <select id="date-end-m" aria-label="结束月"></select>
-          <span>月</span>
-          <select id="date-end-d" aria-label="结束日"></select>
-          <span>日</span>
-          <button type="button" id="date-apply" class="search-btn">应用</button>
-          <button type="button" id="date-reset" class="clear-btn">重置</button>
+          <button type="button" data-quick="today">今天</button>
+          <button type="button" data-quick="7d" class="active">最近 7 天</button>
+          <button type="button" data-quick="30d">最近 30 天</button>
+          <button type="button" id="custom-trigger">自定义…</button>
         </div>
         <button type="button" id="clear-filters" class="clear-btn">清除条件</button>
       </div>
       <p class="range-hint">日期口径：发布时间（按北京时区）；缺失时间不参与日期筛选。</p>
+
+      {# 自定义日期弹出层（点"自定义…"才显示） #}
+      <div class="date-popover" id="date-popover" hidden>
+        <div class="popover-quick">
+          <span class="popover-label">快捷：</span>
+          <button type="button" data-pop-quick="today">今天</button>
+          <button type="button" data-pop-quick="yesterday">昨天</button>
+          <button type="button" data-pop-quick="7d">近 7 天</button>
+          <button type="button" data-pop-quick="30d">近 30 天</button>
+          <button type="button" data-pop-quick="month">本月</button>
+        </div>
+        <div class="popover-range">
+          <div class="popover-field">
+            <span>起始</span>
+            <select id="date-start-y" aria-label="起始年"></select>
+            <span>年</span>
+            <select id="date-start-m" aria-label="起始月"></select>
+            <span>月</span>
+            <select id="date-start-d" aria-label="起始日"></select>
+            <span>日</span>
+          </div>
+          <div class="popover-field">
+            <span>结束</span>
+            <select id="date-end-y" aria-label="结束年"></select>
+            <span>年</span>
+            <select id="date-end-m" aria-label="结束月"></select>
+            <span>月</span>
+            <select id="date-end-d" aria-label="结束日"></select>
+            <span>日</span>
+          </div>
+        </div>
+        <div class="popover-actions">
+          <button type="button" id="date-reset" class="clear-btn">清除</button>
+          <button type="button" id="date-apply" class="search-btn">确定</button>
+        </div>
+      </div>
     </section>
 
     {# ── 热点区 ── #}
