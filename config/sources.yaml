@@ -2,20 +2,27 @@
 # 每个源必须独立：不同媒体/平台，不能是同一站点的两个入口
 
 sources:
+  - id: arxiv
+    name: ArXiv cs.AI
+    type: api
+    url: http://export.arxiv.org/api/query
+    lang: en
+    homepage: https://arxiv.org/list/cs.AI/recent
+    enabled: true
+
   - id: jiqizhixin
     name: 机器之心
     type: rss
     url: https://www.jiqizhixin.com/rss
     lang: zh
-    # 来源主页（用于页面展示"来源"列）
     homepage: https://www.jiqizhixin.com
-    # 启用状态：可在不影响其他源的情况下停用
-    enabled: true
+    # RSS URL 当前返回非合法 XML，停用备用；修复 URL 后改 true 即可启用
+    enabled: false
 
-  - id: hf_papers
+  - id: huggingface_papers
     name: Hugging Face Papers
     type: api
-    url: https://huggingface.co/api/0/papers
+    url: https://huggingface.co/api/daily_papers
     lang: en
     homepage: https://huggingface.co/papers
     enabled: true
