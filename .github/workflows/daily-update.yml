@@ -24,7 +24,7 @@ jobs:
       url: ${{ steps.deploy.outputs.page_url }}
     steps:
       - name: 检出代码
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: 安装 Python
         uses: actions/setup-python@v5
@@ -37,6 +37,9 @@ jobs:
 
       - name: 采集 → 去重 → 构建
         run: python -m src.main
+
+      - name: 安装测试依赖
+        run: pip install pytest
 
       - name: 运行测试（验证产物完整性）
         run: python -m pytest tests/ -q
