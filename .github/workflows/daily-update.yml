@@ -1,0 +1,67 @@
+name: daily-update
+
+# 触发：每日北京 09:00 自动运行；workflow_dispatch 提供 GitHub UI 手动触发
+# 题目要求"不依赖用户打开网页或个人电脑持续开机"——GitHub Actions 云上定时满足
+on:
+  schedule:
+    - cron: '0 1 * * *'   # UTC 01:00 == 北京 09:00
+  workflow_dispatch:
+
+permissions:
+  contents: write    # 提交 data/ 增量到仓库
+  pages: write       # 部署 Pages
+  id-token: write    # Pages 部署所需
+
+concurrency:
+  group: daily-update
+  cancel-in-progress: false
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 安装 Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+          cache: pip
+
+      - name: 安装依赖
+        run: pip install -r requirements.txt
+
+      - name: 采集 → 去重 → 构建
+        run: python -m src.main
+
+      - name: 运行测试（验证产物完整性）
+        run: python -m pytest tests/ -q
+
+      - name: 提交数据增量
+        # 单源失败也可能有部分新增；提交 data/ 保留版本历史，便于回看
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/news.json data/fetch_log.json data/archive/ 2>/dev/null || true
+          if git diff --cached --quiet; then
+            echo "本次无数据变更"
+          else
+            git commit -m "chore(data): daily update $(date -u +%Y-%m-%d)"
+            git push
+          fi
+
+      - name: 配置 Pages
+        uses: actions/configure-pages@v4
+
+      - name: 上传站点产物
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site/
+
+      - name: 部署到 GitHub Pages
+        id: deploy
+        uses: actions/deploy-pages@v4

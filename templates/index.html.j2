@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>每日 AI 情报站</title>
+  <meta name="description" content="让关注 AI 的人，在几分钟内了解近期值得关注的动态。每天自动更新。">
+  <link rel="stylesheet" href="static/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap header-inner">
+      <div class="brand">
+        <span class="brand-mark">AI</span>
+        <div>
+          <h1>每日 AI 情报站</h1>
+          <p class="tagline">几分钟内看完近期值得关注的 AI 动态 · 每日自动更新</p>
+        </div>
+      </div>
+      <nav class="top-nav">
+        <a href="index.html" class="active">今日</a>
+        <a href="archive/index.html">历史存档</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    {# ── 状态栏：最近更新与来源采集状态 ── #}
+    <section class="status-bar" aria-label="最近更新状态">
+      {% if latest_run.fetched_at %}
+        <span class="status-label">最近更新</span>
+        <time datetime="{{ latest_run.fetched_at }}">{{ latest_run.fetched_at|fmt_time }}</time>
+        {% for src, st in latest_run.status.items() %}
+          {% set failed = st.startswith('fail') %}
+          <span class="src-pill {{ 'src-fail' if failed else 'src-ok' }}" title="{{ st }}">
+            {{ src }}{% if failed %} ✕{% else %} ✓{% endif %}
+          </span>
+        {% endfor %}
+      {% else %}
+        <span class="status-label">暂无运行记录</span>
+      {% endif %}
+    </section>
+
+    {# ── 控件区：搜索 / 来源筛选 / 日期范围 / 清空 ── #}
+    <section class="filters" aria-label="查找与筛选">
+      <div class="search-wrap">
+        <input id="search" type="search" placeholder="搜索关键词（标题或摘要）…" autocomplete="off">
+      </div>
+      <div class="filter-row">
+        <label class="filter-label">来源
+          <select id="source-filter">
+            <option value="">全部</option>
+            {% for s in source_filter %}
+              <option value="{{ s.name }}">{{ s.name }}</option>
+            {% endfor %}
+          </select>
+        </label>
+        <div class="date-range" role="group" aria-label="日期范围">
+          <button type="button" data-range="today">今天</button>
+          <button type="button" data-range="7d" class="active">最近 7 天</button>
+          <button type="button" data-range="all">全部</button>
+        </div>
+        <button type="button" id="clear-filters" class="clear-btn">清除条件</button>
+      </div>
+      <p class="range-hint">日期口径：发布时间（按北京时区）；缺失时间不参与今天/7天筛选。最近 {{ recent_days }} 天</p>
+    </section>
+
+    {# ── 热点区 ── #}
+    {% set hot_items = items | selectattr('is_hot', 'true') | list %}
+    {% if hot_items %}
+    <section class="hot-zone" aria-label="每日热点">
+      <h2>每日重点 {{ hot_items|length }} 条</h2>
+      <p class="hot-hint">基于关键词加权与当日发布时间的启发式高亮，仅作阅读参考。</p>
+      <div class="hot-list">
+        {% for it in hot_items %}
+          <article class="news-card hot" data-source="{{ it.source }}" data-title="{{ it.title }}" data-summary="{{ it.summary }}" data-pub="{{ (it.published_at or '')[:10] }}">
+            <div class="card-head">
+              <span class="badge badge-hot">热点</span>
+              <span class="src-name">{{ it.source }}</span>
+              <time class="pub-time" datetime="{{ it.published_at or '' }}">{{ it.published_at|fmt_time }}</time>
+            </div>
+            <h3 class="card-title">
+              <a href="{{ it.original_link }}" target="_blank" rel="noopener noreferrer">{{ it.title }}</a>
+            </h3>
+            {% if it.summary %}<p class="card-summary">{{ it.summary }}</p>{% endif %}
+            <div class="card-meta">
+              {% if it.ai_generated %}<span class="ai-flag" title="摘要由AI生成">AI 摘要</span>{% endif %}
+              <span class="lang-flag" title="原文语言">{{ '中文' if it.lang == 'zh' else '英文' }}</span>
+              <button type="button" class="copy-md" data-title="{{ it.title }}" data-summary="{{ it.summary }}" data-link="{{ it.original_link }}" data-source="{{ it.source }}" data-time="{{ it.published_at|fmt_time }}">复制为 Markdown 引用</button>
+            </div>
+          </article>
+        {% endfor %}
+      </div>
+    </section>
+    {% endif %}
+
+    {# ── 新闻列表 ── #}
+    <section class="news-list" aria-label="资讯列表">
+      <h2>全部资讯（共 {{ items|length }} 条）</h2>
+      <div id="news-container">
+        {% for it in items %}
+          <article class="news-card" data-source="{{ it.source }}" data-title="{{ it.title }}" data-summary="{{ it.summary }}" data-pub="{{ (it.published_at or '')[:10] }}">
+            <div class="card-head">
+              <span class="src-name">{{ it.source }}</span>
+              <time class="pub-time" datetime="{{ it.published_at or '' }}">{{ it.published_at|fmt_time }}</time>
+              <span class="fetched-time" title="采集时间">采集于 {{ it.fetched_at|fmt_time }}</span>
+            </div>
+            <h3 class="card-title">
+              <a href="{{ it.original_link }}" target="_blank" rel="noopener noreferrer">{{ it.title }}</a>
+            </h3>
+            {% if it.summary %}<p class="card-summary">{{ it.summary }}</p>{% endif %}
+            <div class="card-meta">
+              {% if it.ai_generated %}<span class="ai-flag" title="摘要由AI生成">AI 摘要</span>{% endif %}
+              <span class="lang-flag" title="原文语言">{{ '中文' if it.lang == 'zh' else '英文' }}</span>
+              <button type="button" class="copy-md" data-title="{{ it.title }}" data-summary="{{ it.summary }}" data-link="{{ it.original_link }}" data-source="{{ it.source }}" data-time="{{ it.published_at|fmt_time }}">复制为 Markdown 引用</button>
+            </div>
+          </article>
+        {% endfor %}
+        <p id="empty-state" class="empty-state" hidden>没有匹配的资讯。试试<span class="link-clear">清除条件</span>或换一个关键词。</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <p>每日 AI 情报站 · 数据来源：
+        {% for s in source_filter %}
+          <a href="{{ s.name }}" target="_blank" rel="noopener noreferrer">{{ s.name }}</a>{% if not loop.last %} · {% endif %}
+        {% endfor %}
+      </p>
+      <p class="footer-meta">构建时间（UTC）：{{ built_at }} · 原文版权归原作者所有</p>
+    </div>
+  </footer>
+
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+  <script src="static/app.js" defer></script>
+</body>
+</html>

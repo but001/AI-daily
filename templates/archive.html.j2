@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ date }} 存档 · 每日 AI 情报站</title>
+  <link rel="stylesheet" href="../static/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap header-inner">
+      <div class="brand">
+        <span class="brand-mark">AI</span>
+        <div>
+          <h1>{{ date }} 存档</h1>
+          <p class="tagline">当天采集到的全部资讯快照</p>
+        </div>
+      </div>
+      <nav class="top-nav">
+        <a href="../index.html">今日</a>
+        <a href="index.html" class="active">历史存档</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    {# ── 状态栏：归档日的最近一次运行 ── #}
+    <section class="status-bar" aria-label="归档日运行状态">
+      {% if latest_run.fetched_at %}
+        <span class="status-label">最近更新</span>
+        <time datetime="{{ latest_run.fetched_at }}">{{ latest_run.fetched_at|fmt_time }}</time>
+        {% for src, st in latest_run.status.items() %}
+          {% set failed = st.startswith('fail') %}
+          <span class="src-pill {{ 'src-fail' if failed else 'src-ok' }}" title="{{ st }}">
+            {{ src }}{% if failed %} ✕{% else %} ✓{% endif %}
+          </span>
+        {% endfor %}
+      {% else %}
+        <span class="status-label">暂无运行记录</span>
+      {% endif %}
+    </section>
+
+    {# ── 控件区 ── #}
+    <section class="filters" aria-label="查找与筛选">
+      <div class="search-wrap">
+        <input id="search" type="search" placeholder="在本日资讯内搜索关键词…" autocomplete="off">
+      </div>
+      <div class="filter-row">
+        <label class="filter-label">来源
+          <select id="source-filter">
+            <option value="">全部</option>
+            {% for s in source_filter %}
+              <option value="{{ s.name }}">{{ s.name }}</option>
+            {% endfor %}
+          </select>
+        </label>
+        <button type="button" id="clear-filters" class="clear-btn">清除条件</button>
+      </div>
+    </section>
+
+    {# ── 热点区 ── #}
+    {% set hot_items = items | selectattr('is_hot', 'true') | list %}
+    {% if hot_items %}
+    <section class="hot-zone" aria-label="当日热点">
+      <h2>当日重点 {{ hot_items|length }} 条</h2>
+      <div class="hot-list">
+        {% for it in hot_items %}
+          <article class="news-card hot" data-source="{{ it.source }}" data-title="{{ it.title }}" data-summary="{{ it.summary }}" data-pub="{{ (it.published_at or '')[:10] }}">
+            <div class="card-head">
+              <span class="badge badge-hot">热点</span>
+              <span class="src-name">{{ it.source }}</span>
+              <time class="pub-time" datetime="{{ it.published_at or '' }}">{{ it.published_at|fmt_time }}</time>
+            </div>
+            <h3 class="card-title">
+              <a href="{{ it.original_link }}" target="_blank" rel="noopener noreferrer">{{ it.title }}</a>
+            </h3>
+            {% if it.summary %}<p class="card-summary">{{ it.summary }}</p>{% endif %}
+            <div class="card-meta">
+              {% if it.ai_generated %}<span class="ai-flag">AI 摘要</span>{% endif %}
+              <span class="lang-flag">{{ '中文' if it.lang == 'zh' else '英文' }}</span>
+              <button type="button" class="copy-md" data-title="{{ it.title }}" data-summary="{{ it.summary }}" data-link="{{ it.original_link }}" data-source="{{ it.source }}" data-time="{{ it.published_at|fmt_time }}">复制为 Markdown 引用</button>
+            </div>
+          </article>
+        {% endfor %}
+      </div>
+    </section>
+    {% endif %}
+
+    {# ── 新闻列表 ── #}
+    <section class="news-list" aria-label="本日资讯列表">
+      <h2>全部资讯（共 {{ items|length }} 条）</h2>
+      <div id="news-container">
+        {% for it in items %}
+          <article class="news-card" data-source="{{ it.source }}" data-title="{{ it.title }}" data-summary="{{ it.summary }}" data-pub="{{ (it.published_at or '')[:10] }}">
+            <div class="card-head">
+              <span class="src-name">{{ it.source }}</span>
+              <time class="pub-time" datetime="{{ it.published_at or '' }}">{{ it.published_at|fmt_time }}</time>
+            </div>
+            <h3 class="card-title">
+              <a href="{{ it.original_link }}" target="_blank" rel="noopener noreferrer">{{ it.title }}</a>
+            </h3>
+            {% if it.summary %}<p class="card-summary">{{ it.summary }}</p>{% endif %}
+            <div class="card-meta">
+              {% if it.ai_generated %}<span class="ai-flag">AI 摘要</span>{% endif %}
+              <span class="lang-flag">{{ '中文' if it.lang == 'zh' else '英文' }}</span>
+              <button type="button" class="copy-md" data-title="{{ it.title }}" data-summary="{{ it.summary }}" data-link="{{ it.original_link }}" data-source="{{ it.source }}" data-time="{{ it.published_at|fmt_time }}">复制为 Markdown 引用</button>
+            </div>
+          </article>
+        {% endfor %}
+        <p id="empty-state" class="empty-state" hidden>没有匹配的资讯。试试<span class="link-clear">清除条件</span>。</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <p><a href="index.html">返回存档目录</a> · <a href="../index.html">返回今日</a></p>
+    </div>
+  </footer>
+
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+  <script src="../static/app.js" defer></script>
+</body>
+</html>

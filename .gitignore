@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+env/
+
+# 本地敏感配置（如有 API key，放本地.env，不进仓库）
+.env
+*.local
+
+# IDE
+.vscode/
+.idea/
+
+# 构建产物（由 build.py 生成，CI 每次重建）
+# 注意：data/news.json 与 archive/ 在 CI 中提交，本地不忽略
+_site/

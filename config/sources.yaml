@@ -1,0 +1,30 @@
+# 信息源配置
+# 每个源必须独立：不同媒体/平台，不能是同一站点的两个入口
+
+sources:
+  - id: jiqizhixin
+    name: 机器之心
+    type: rss
+    url: https://www.jiqizhixin.com/rss
+    lang: zh
+    # 来源主页（用于页面展示"来源"列）
+    homepage: https://www.jiqizhixin.com
+    # 启用状态：可在不影响其他源的情况下停用
+    enabled: true
+
+  - id: hf_papers
+    name: Hugging Face Papers
+    type: api
+    url: https://huggingface.co/api/0/papers
+    lang: en
+    homepage: https://huggingface.co/papers
+    enabled: true
+
+# 时区口径说明（README 需对应说明）
+# - published_at: 保留源原时区，存储为 ISO8601 带时区
+# - fetched_at: 采集时刻，UTC
+# - 界面展示统一按 Asia/Shanghai
+display_timezone: Asia/Shanghai
+
+# 最近 N 天的范围口径（题目要求"最近7天"）
+recent_days: 7

@@ -1,0 +1,38 @@
+[
+  {
+    "id": "abc123def4567890",
+    "title": "OpenAI 发布 GPT-5：上下文窗口扩展至 200 万 tokens",
+    "original_link": "https://example.com/openai-gpt5-release",
+    "source": "机器之心",
+    "source_url": "https://www.jiqizhixin.com",
+    "summary": "OpenAI 今日宣布 GPT-5 正式发布，支持 200 万 tokens 上下文，并在多模态推理上有显著提升。",
+    "published_at": "2026-09-14T08:30:00+00:00",
+    "fetched_at": "2026-09-14T01:00:00+00:00",
+    "ai_generated": false,
+    "lang": "zh"
+  },
+  {
+    "id": "xyz789ghi0123456",
+    "title": "Scaling Laws for Mixture-of-Experts Models",
+    "original_link": "https://huggingface.co/papers/2609.99999",
+    "source": "Hugging Face Papers",
+    "source_url": "https://huggingface.co/papers",
+    "summary": "We study scaling laws for sparse Mixture-of-Experts models and find...",
+    "published_at": null,
+    "fetched_at": "2026-09-14T01:00:00+00:00",
+    "ai_generated": false,
+    "lang": "en"
+  },
+  {
+    "id": "longtitle0000001",
+    "title": "这是一条非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常长的标题用于测试长标题在界面上的换行处理与显示效果是否会破坏布局或者被截断从而影响用户阅读",
+    "original_link": "https://example.com/long-title-test-case-001",
+    "source": "机器之心",
+    "source_url": "https://www.jiqizhixin.com",
+    "summary": "测试长标题场景。",
+    "published_at": "2026-09-13T10:00:00+00:00",
+    "fetched_at": "2026-09-14T01:00:00+00:00",
+    "ai_generated": false,
+    "lang": "zh"
+  }
+]
