@@ -1,4 +1,11 @@
 {
+  "2026-09-14T13:18:30+00:00": {
+    "openai": "ok",
+    "techcrunch": "ok",
+    "hf_blog": "ok",
+    "hackernews": "ok",
+    "arxiv": "fail: HTTPError: 429 Client Error: Unknown Error for url: https://export.arxiv.org/api/query?search_query=cat:cs.AI&start=0&max_results=50&sortBy=submittedDate&sortOrder=descending"
+  },
   "2026-09-14T13:01:51+00:00": {
     "arxiv": "fail: HTTPError: 429 Client Error: Unknown Error for url: https://export.arxiv.org/api/query?search_query=cat:cs.AI&start=0&max_results=50&sortBy=submittedDate&sortOrder=descending",
     "huggingface_papers": "ok",
