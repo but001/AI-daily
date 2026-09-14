@@ -1183,6 +1183,19 @@
     "is_hot": false
   },
   {
+    "id": "eaf41361e45556f4",
+    "title": "DataFlex-RL: An Evaluation Platform for RLVR Data Policies",
+    "original_link": "https://huggingface.co/papers/2609.06107",
+    "source": "Hugging Face Papers",
+    "source_url": "https://huggingface.co/papers",
+    "fetched_at": "2026-09-14T12:26:13+00:00",
+    "summary": "Data policies for reinforcement learning with verifiable rewards (RLVR) determine which rollouts are used, how strongly they are weighted, and which domains contribute to subsequent training batches. We introduce DataFlex-RL, an evaluation platform for comparing these choices under a common GRPO recipe. Our primary experiment evaluates 13 configurations across 12 matched seeds using Qwen2.5-7B-Base and 12 mathematics, logic, and science benchmarks. Uniform GRPO improves the domain-balanced average accuracy by 7.76 percentage points over the untrained checkpoint. None of the eight rollout-selection or reweighting methods achieves a paired 95% confidence interval that excludes zero relative to uniform sampling, and none of the three adaptive mixtures outperforms a fixed equal mixture at the same level of precision. A corrected 12-seed extension on Llama-3.1-8B-Base places the additional methods on the same score scale as the original controls, but does not reveal a consistent winner in terms of observed mean performance. We also quantify evaluation sensitivity by rescoring nine Qwen2.5-7B-Instruct runs using a math-heavy six-benchmark summary, consisting of five mathematics benchmarks and GPQA-Diamond but no logic benchmark, and comparing it with the domain-balanced 12-benchmark summary. The resulting rankings are negatively correlated, with a correlation coefficient of -0.33, whereas summaries that retain all 12 benchmarks largely agree. Across the controlled settings studied here, changing the data policy measurably changes the training process but does not produce a reproducible improvement over uniform training.",
+    "published_at": "2026-09-04T20:00:00.000Z",
+    "ai_generated": false,
+    "lang": "en",
+    "is_hot": false
+  },
+  {
     "id": "08564f58e73602ef",
     "title": "Beyond Top-k Skill Retrieval: Diversity-Aware Skill Routing for LLM Agents",
     "original_link": "https://huggingface.co/papers/2609.05824",
