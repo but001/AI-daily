@@ -1222,6 +1222,32 @@
     "is_hot": false
   },
   {
+    "id": "2f24f373de22d1ca",
+    "title": "Building and Evaluating Fixed-Voice Thai TTS from Synthetic Speech",
+    "original_link": "https://huggingface.co/papers/2609.03502",
+    "source": "Hugging Face Papers",
+    "source_url": "https://huggingface.co/papers",
+    "fetched_at": "2026-09-14T12:16:55+00:00",
+    "summary": "In low-resource settings, deploying TTS typically requires choosing between a large voice-cloning model with costly inference or a compact fixed-voice system that requires a speaker-specific corpus. We study a third route: using a large voice-cloning model as a programmable data source to turn a short voice reference (e.g., 15 seconds) into a compact fixed-voice student trained entirely on synthetic speech. This setting makes pipeline design consequential: teacher errors become training targets, while filtering failed generations can reduce coverage of difficult texts. Thai further introduces challenges from ambiguous word boundaries, lexical tone, names and loanwords, numeric verbalization, and Thai-English code-switching. We study how text preparation, synthetic generation, quality filtering, rejection sampling, and frontend choices affect the resulting student, and where teacher limitations remain. We evaluate CER, Challenge-Set Keyword Accuracy, Prosody Pause Accuracy, speaker similarity, and speaking rate. The resulting 82M-parameter model, Wayu-Paxa-TTS-Edge, enables on-device Thai TTS without reference audio. It achieves 68.2% Challenge-Set Keyword Accuracy (85.5% of Gemini 3.1) and 91.4% pause precision, outperforming its OmniVoice teacher (89.9%) and reaching 94.8% of Gemini 3.1. It also achieves the lowest pause-placement error and intra-word pause rates among the three systems, and 3.7% and 1.1% CER on Thai and English, respectively. We open-source the model and evaluation framework for Thai TTS development.",
+    "published_at": "2026-09-02T20:00:00.000Z",
+    "ai_generated": false,
+    "lang": "en",
+    "is_hot": false
+  },
+  {
+    "id": "80cef584b6d9d6cf",
+    "title": "How Far Can Synthetic Data Take Thai OCR?",
+    "original_link": "https://huggingface.co/papers/2609.03595",
+    "source": "Hugging Face Papers",
+    "source_url": "https://huggingface.co/papers",
+    "fetched_at": "2026-09-14T12:16:55+00:00",
+    "summary": "We investigate what makes synthetic OCR supervision transfer to real Thai documents and use the resulting insights to build Wayu-Paxa-OCR-Zero, a Thai OCR model adapted without OCR labels from real Thai document pages. Synthetic data provide exact labels at scale, but \"realism\" conflates source domain, page context, typography, spatial structure, and glyph variation. We disentangle these factors with a controlled document-reconstruction pipeline and evaluate each variant under page- and crop-level training on printed and handwritten Thai documents. Non-text context has little consistent effect, whereas typeface diversity, two-dimensional structure, and real handwriting glyphs improve transfer; moreover, source-domain matching depends on training granularity, with in-domain reconstruction approaching real printed supervision under page-level training (1.82% versus 1.31% median character error rate) but underperforming out-of-domain reconstruction under crop-level training (15.59% versus 5.52%). Guided by these findings, we adapt the 0.9B-parameter PaddleOCR-VL-1.6 into Wayu-Paxa-OCR-Zero using 45,723 synthetic pages: relative to its base checkpoint, it reduces median character error rate from 6.64% to 1.24% on printed pages and from 74.87% to 20.55% on handwriting and outperforms Typhoon OCR v1 7B on all five evaluation sets, showing that synthetic-only training can be competitive.",
+    "published_at": "2026-09-02T20:00:00.000Z",
+    "ai_generated": false,
+    "lang": "en",
+    "is_hot": false
+  },
+  {
     "id": "60318abf9fb9d098",
     "title": "From Reweighting to Rewriting: Unlocking the Intervention Effects of Influential Samples in Training Data Attribution",
     "original_link": "https://huggingface.co/papers/2609.02771",
