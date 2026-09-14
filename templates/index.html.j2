@@ -70,7 +70,7 @@
     {% set hot_items = items | selectattr('is_hot', 'true') | list %}
     {% if hot_items %}
     <section class="hot-zone" id="hot-zone" aria-label="今日热点">
-      <h2>今日热点 {{ hot_items|length }} 条</h2>
+      <h2>今日热点</h2>
       <p class="hot-hint">基于关键词加权与当日发布时间的启发式高亮，仅作阅读参考。</p>
       <div class="hot-list">
         {% for it in hot_items %}
