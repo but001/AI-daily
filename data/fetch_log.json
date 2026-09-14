@@ -1,4 +1,9 @@
 {
+  "2026-09-14T13:01:51+00:00": {
+    "arxiv": "fail: HTTPError: 429 Client Error: Unknown Error for url: https://export.arxiv.org/api/query?search_query=cat:cs.AI&start=0&max_results=50&sortBy=submittedDate&sortOrder=descending",
+    "huggingface_papers": "ok",
+    "baai_hub": "fail: HTTPError: 404 Client Error: Not Found for url: https://hub.baai.ac.cn/rss"
+  },
   "2026-09-14T12:26:11+00:00": {
     "arxiv": "ok",
     "huggingface_papers": "ok"
