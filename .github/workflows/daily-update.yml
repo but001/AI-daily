@@ -1,11 +1,24 @@
 name: daily-update
 
-# 触发：每日北京 09:00 自动运行；workflow_dispatch 提供 GitHub UI 手动触发
+# 触发：
+# - 每日北京 09:00 自动运行
+# - push 到 main 时自动部署（排除 data/，避免 CI 提交 data 后死循环触发）
+# - workflow_dispatch 提供 GitHub UI 手动触发
 # 题目要求"不依赖用户打开网页或个人电脑持续开机"——GitHub Actions 云上定时满足
 on:
   schedule:
     - cron: '0 1 * * *'   # UTC 01:00 == 北京 09:00
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'src/**'
+      - 'templates/**'
+      - 'static/**'
+      - 'tests/**'
+      - 'config/**'
+      - 'requirements.txt'
+      - '.github/workflows/daily-update.yml'
 
 permissions:
   contents: write    # 提交 data/ 增量到仓库
