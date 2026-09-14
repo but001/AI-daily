@@ -46,6 +46,7 @@ jobs:
 
       - name: 提交数据增量
         # 单源失败也可能有部分新增；提交 data/ 保留版本历史，便于回看
+        # rebase 防止与远端最新提交冲突导致 non-fast-forward
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
@@ -54,6 +55,7 @@ jobs:
             echo "本次无数据变更"
           else
             git commit -m "chore(data): daily update $(date -u +%Y-%m-%d)"
+            git pull --rebase origin main
             git push
           fi
 
