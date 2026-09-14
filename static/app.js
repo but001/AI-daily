@@ -5,11 +5,13 @@
   "use strict";
 
   var searchInput = document.getElementById("search");
+  var searchBtn = document.getElementById("search-btn");
   var sourceFilter = document.getElementById("source-filter");
   var dateRange = document.querySelector(".date-range");
   var clearBtn = document.getElementById("clear-filters");
   var emptyState = document.getElementById("empty-state");
   var linkClear = document.querySelector(".link-clear");
+  var hotZone = document.getElementById("hot-zone");
   var cards = Array.prototype.slice.call(
     document.querySelectorAll("#news-container .news-card")
   );
@@ -66,6 +68,9 @@
 
   function applyFilters() {
     var visibleCount = 0;
+    // 搜索激活（输入非空）时隐藏今日热点区，避免与列表结果混淆
+    var q = (searchInput && searchInput.value || "").trim();
+    if (hotZone) hotZone.classList.toggle("hidden", !!q);
     cards.forEach(function (card) {
       var ok = matchCard(card);
       card.classList.toggle("hidden", !ok);
@@ -74,12 +79,14 @@
     if (emptyState) emptyState.hidden = visibleCount !== 0;
   }
 
-  // 搜索：input 防抖
-  var searchTimer = null;
+  // 搜索：点按钮或按 Enter 才触发，避免边输入边过滤
+  if (searchBtn) searchBtn.addEventListener("click", applyFilters);
   if (searchInput) {
-    searchInput.addEventListener("input", function () {
-      clearTimeout(searchTimer);
-      searchTimer = setTimeout(applyFilters, 120);
+    searchInput.addEventListener("keydown", function (e) {
+      if (e.key === "Enter" || e.key === "Enter ") {
+        e.preventDefault();
+        applyFilters();
+      }
     });
   }
 
@@ -107,6 +114,7 @@
   function clearAll() {
     if (searchInput) searchInput.value = "";
     if (sourceFilter) sourceFilter.value = "";
+    if (hotZone) hotZone.classList.remove("hidden");
     if (dateRange) {
       Array.prototype.forEach.call(
         dateRange.querySelectorAll("button"),
