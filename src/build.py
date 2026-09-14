@@ -4,8 +4,7 @@
 - _site/index.html         主列表页（含全部新闻 + 嵌入 JSON 供 JS 筛选）
 - _site/data/news.json     嵌入式数据副本（供前端 fetch/筛选）
 - _site/data/fetch_log.json 最近更新状态
-- _site/archive/index.html  历史归档日期目录
-- _site/archive/<date>.html 每个历史日期的归档页
+- _site/my-reading.html    我的阅读页（纯静态壳，JS 从 localStorage 渲染）
 - _site/static/             CSS/JS/图标
 
 每日热点启发式：
@@ -32,7 +31,6 @@ ROOT = Path(__file__).resolve().parent.parent
 TEMPLATES_DIR = ROOT / "templates"
 STATIC_SRC = ROOT / "static"
 OUT_DIR = ROOT / "_site"
-ARCHIVE_DIR = ROOT / "data" / "archive"
 
 DISPLAY_TZ = "Asia/Shanghai"
 
@@ -182,65 +180,14 @@ def build_site() -> None:
     )
     (OUT_DIR / "index.html").write_text(html, encoding="utf-8")
 
-    # 5) 渲染归档列表页 + 每个日期归档页
-    archive_dir_out = OUT_DIR / "archive"
-    archive_dir_out.mkdir(parents=True, exist_ok=True)
-
-    # 找出所有现有归档快照
-    archive_dates: list[str] = []
-    if ARCHIVE_DIR.exists():
-        for p in ARCHIVE_DIR.glob("*.json"):
-            archive_dates.append(p.stem)
-    archive_dates.sort(reverse=True)
-
-    tpl_archive_index = env.get_template("archive_index.html.j2")
-    (archive_dir_out / "index.html").write_text(
-        tpl_archive_index.render(dates=archive_dates),
-        encoding="utf-8",
-    )
-
-    tpl_archive = env.get_template("archive.html.j2")
-    for date_str in archive_dates:
-        snap_path = ARCHIVE_DIR / f"{date_str}.json"
-        try:
-            snap = json.loads(snap_path.read_text(encoding="utf-8"))
-        except Exception:
-            continue
-        snap = mark_hot(snap, top_n=3)
-        html = tpl_archive.render(
-            items=snap,
-            date=date_str,
-            source_filter=source_filter,
-            latest_run=latest_run,
-            built_at=now_iso_utc(),
-        )
-        (archive_dir_out / f"{date_str}.html").write_text(html, encoding="utf-8")
-
-    # 6) 渲染「我的阅读」页（纯静态壳，列表由 JS 从 localStorage 渲染）
+    # 5) 渲染「我的阅读」页（纯静态壳，列表由 JS 从 localStorage 渲染）
     tpl_reading = env.get_template("my-reading.html.j2")
     html = tpl_reading.render(built_at=now_iso_utc())
     (OUT_DIR / "my-reading.html").write_text(html, encoding="utf-8")
 
 
-def snapshot_today() -> None:
-    """生成当日归档快照 data/archive/YYYY-MM-DD.json。
-
-    用于"离线历史存档"亮点：用户可按日期回看某天看了什么。
-    在每次 build 前调用，把今日的 news.json 拷贝为日期命名的快照。
-    若当日快照已存在则覆盖（保留最新一份）。
-    """
-    today = _today_date_str()
-    ARCHIVE_DIR.mkdir(parents=True, exist_ok=True)
-    snap_path = ARCHIVE_DIR / f"{today}.json"
-    src_path = dedupe_mod.NEWS_PATH
-    if not src_path.exists():
-        return
-    snap_path.write_text(src_path.read_text(encoding="utf-8"), encoding="utf-8")
-
-
 def build_all() -> None:
-    """完整流程入口：归档快照 → 构建站点。"""
-    snapshot_today()
+    """完整流程入口：构建站点。"""
     build_site()
 
 

@@ -3,7 +3,7 @@
 供 GitHub Actions workflow 调用，也可本地手动运行验证：
     py -m src.main
 
-输出：data/news.json 增量、data/archive/<date>.json 快照、_site/ 静态站。
+输出：data/news.json 增量、_site/ 静态站。
 """
 from __future__ import annotations
 
