@@ -1,18 +1,9 @@
-"""智源社区 RSS 源适配器。
+"""通用 RSS 2.0 / Atom 适配器。
 
-源：https://hub.baai.ac.cn/rss
-类型：RSS 2.0（feedparser 解析）
-语言：中文（国内 AI 学术社区）
+供多个标准 RSS 源复用：OpenAI Blog / TechCrunch AI / Hugging Face Blog / Hacker News 等。
+字段映射统一按 RSS 2.0 标准字段，feedparser 会自动处理 Atom 与 RSS 的差异。
 
-智源社区是北京智源研究院运营的 AI 学术社区，内容覆盖论文解读、
-模型实现、研究方法等。RSS 返回的是 HTML 编码字符实体，
-feedparser 会自动解码为正常 UTF-8。
-
-字段映射：
-  entry.title        → NewsItem.title
-  entry.link         → NewsItem.original_link
-  entry.description  → NewsItem.summary（HTML，strip tags）
-  entry.pubDate      → NewsItem.published_at（RFC822 → ISO8601）
+config 字段：{ id, name, url, homepage, lang, limit? }
 """
 from __future__ import annotations
 
@@ -21,25 +12,21 @@ from typing import List
 import feedparser
 
 from ..models import NewsItem, make_id, now_iso_utc
-from ._common import DEFAULT_TIMEOUT, DEFAULT_UA, http_get, parse_struct_time, strip_html
+from ._common import http_get, parse_struct_time, strip_html
 
 
 def fetch(config: dict) -> List[NewsItem]:
-    """从智源社区 RSS 获取最新内容。
-
-    config 字段：{ id, name, url, homepage, lang, limit? }
-    """
     url = config["url"]
     raw = http_get(url)
 
     feed = feedparser.parse(raw)
     if feed.bozo and feed.get("bozo_exception") and not feed.entries:
-        raise RuntimeError(f"智源 RSS 解析失败: {feed.bozo_exception}") from feed.bozo_exception
+        raise RuntimeError(f"RSS 解析失败: {feed.bozo_exception}") from feed.bozo_exception
 
     fetched_at = now_iso_utc()
     source_name = config["name"]
-    source_home = config.get("homepage", "https://hub.baai.ac.cn")
-    lang = config.get("lang", "zh")
+    source_home = config.get("homepage", "")
+    lang = config.get("lang", "en")
     limit = int(config.get("limit", 50))
 
     items: List[NewsItem] = []
@@ -48,7 +35,10 @@ def fetch(config: dict) -> List[NewsItem]:
         title = entry.get("title", "").strip()
         if not link or not title:
             continue
-        summary = strip_html(entry.get("description", ""))
+        # RSS 2.0: description；Atom: summary 或 content
+        summary = strip_html(
+            entry.get("description") or entry.get("summary") or ""
+        )
         published_at = parse_struct_time(entry.get("published_parsed"))
 
         items.append(

@@ -1,38 +1,50 @@
 # 信息源配置
 # 每个源必须独立：不同媒体/平台，不能是同一站点的两个入口
+# adapter 字段指定适配器模块：rss = 通用 RSS 2.0/Atom；arxiv = ArXiv API 专用
 
 sources:
+  - id: openai
+    name: OpenAI Blog
+    adapter: rss
+    type: rss
+    url: https://openai.com/news/rss.xml
+    lang: en
+    homepage: https://openai.com/news
+    enabled: true
+
+  - id: techcrunch
+    name: TechCrunch AI
+    adapter: rss
+    type: rss
+    url: https://techcrunch.com/category/artificial-intelligence/feed/
+    lang: en
+    homepage: https://techcrunch.com/category/artificial-intelligence/
+    enabled: true
+
+  - id: hf_blog
+    name: Hugging Face Blog
+    adapter: rss
+    type: rss
+    url: https://huggingface.co/blog/feed.xml
+    lang: en
+    homepage: https://huggingface.co/blog
+    enabled: true
+
+  - id: hackernews
+    name: Hacker News AI
+    adapter: rss
+    type: rss
+    url: https://hnrss.org/newest?q=AI
+    lang: en
+    homepage: https://news.ycombinator.com/
+    enabled: true
+
   - id: arxiv
-    name: ArXiv cs.AI
+    name: arXiv cs.AI
     type: api
     url: http://export.arxiv.org/api/query
     lang: en
     homepage: https://arxiv.org/list/cs.AI/recent
-    enabled: true
-
-  - id: jiqizhixin
-    name: 机器之心
-    type: rss
-    url: https://www.jiqizhixin.com/rss
-    lang: zh
-    homepage: https://www.jiqizhixin.com
-    # RSS URL 当前返回非合法 XML，停用备用；修复 URL 后改 true 即可启用
-    enabled: false
-
-  - id: huggingface_papers
-    name: Hugging Face Papers
-    type: api
-    url: https://huggingface.co/api/daily_papers
-    lang: en
-    homepage: https://huggingface.co/papers
-    enabled: true
-
-  - id: baai_hub
-    name: 智源社区
-    type: rss
-    url: https://hub.baai.ac.cn/rss
-    lang: zh
-    homepage: https://hub.baai.ac.cn
     enabled: true
 
 # 时区口径说明（README 需对应说明）
@@ -40,6 +52,3 @@ sources:
 # - fetched_at: 采集时刻，UTC
 # - 界面展示统一按 Asia/Shanghai
 display_timezone: Asia/Shanghai
-
-# 最近 N 天的范围口径（题目要求"最近7天"）
-recent_days: 7

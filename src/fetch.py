@@ -40,12 +40,14 @@ def load_sources() -> list[dict]:
     return [s for s in sources if s.get("enabled", True)]
 
 
-def _route_adapter(source_id: str):
-    """按 source_id 路由到对应适配器模块。
+def _route_adapter(source: dict):
+    """路由到对应适配器模块。
 
-    约定：source_id == 文件名（去掉 .py）。如 jiqizhixin → src.sources.jiqizhixin
+    优先看 source['adapter']，否则用 source['id']。
+    约定：适配器模块名 == 该字段值。如 rss → src.sources.rss；arxiv → src.sources.arxiv
     """
-    return importlib.import_module(f".sources.{source_id}", package="src")
+    mod_name = source.get("adapter") or source["id"]
+    return importlib.import_module(f".sources.{mod_name}", package="src")
 
 
 def fetch_all() -> FetchResult:
@@ -56,7 +58,7 @@ def fetch_all() -> FetchResult:
     for src in sources:
         sid = src["id"]
         try:
-            adapter = _route_adapter(sid)
+            adapter = _route_adapter(src)
             items = adapter.fetch(src)
             result.items.extend(items)
             result.status[sid] = "ok"
