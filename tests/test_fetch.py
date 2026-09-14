@@ -34,7 +34,8 @@ def test_single_source_failure_does_not_block_others(tmp_path, monkeypatch):
     monkeypatch.setattr(fetch_mod, "FETCH_LOG_PATH", log_path)
 
     # mock 两个源：A 抛错，B 正常返回
-    def fake_route(sid):
+    def fake_route(source):
+        sid = source["id"]
         if sid == "ok_src":
             m = mock.MagicMock()
             m.fetch.return_value = [_fake_item("https://ok/0001", "ok_src")]
@@ -71,7 +72,7 @@ def test_fetch_log_records_run_status(tmp_path, monkeypatch):
         fetch_mod, "load_sources",
         lambda: [{"id": "ok_src", "name": "OK", "url": "x", "homepage": "", "lang": "zh"}],
     )
-    monkeypatch.setattr(fetch_mod, "_route_adapter", lambda sid: mock.MagicMock(
+    monkeypatch.setattr(fetch_mod, "_route_adapter", lambda source: mock.MagicMock(
         fetch=mock.MagicMock(return_value=[])))
 
     fetch_mod.fetch_all()
@@ -85,7 +86,7 @@ def test_fetch_log_records_run_status(tmp_path, monkeypatch):
 def test_latest_run_summary_returns_most_recent(tmp_path, monkeypatch):
     monkeypatch.setattr(fetch_mod, "FETCH_LOG_PATH", tmp_path / "fetch_log.json")
     monkeypatch.setattr(fetch_mod, "load_sources", lambda: [])
-    monkeypatch.setattr(fetch_mod, "_route_adapter", lambda sid: None)
+    monkeypatch.setattr(fetch_mod, "_route_adapter", lambda source: None)
     fetch_mod.fetch_all()
 
     s = fetch_mod.latest_run_summary()
