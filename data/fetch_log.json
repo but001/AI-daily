@@ -1,4 +1,8 @@
 {
+  "2026-09-14T11:25:13+00:00": {
+    "arxiv": "ok",
+    "huggingface_papers": "ok"
+  },
   "2026-09-14T11:14:09+00:00": {
     "jiqizhixin": "fail: RuntimeError: RSS 解析失败: <unknown>:8:82: not well-formed (invalid token)",
     "hf_papers": "fail: ModuleNotFoundError: No module named 'src.sources.hf_papers'"
