@@ -1,4 +1,4 @@
-// 前端交互：搜索 / 来源筛选 / 日期范围 / 清空 / 复制为 Markdown 引用
+// 前端交互：搜索 / 来源筛选 / 日期范围 / 清空 / 复制为 Markdown 引用 / 阅读历史
 // 设计原则：纯原生 JS，零依赖，静态页面也能离线运行
 
 (function () {
@@ -12,6 +12,9 @@
   var emptyState = document.getElementById("empty-state");
   var linkClear = document.querySelector(".link-clear");
   var hotZone = document.getElementById("hot-zone");
+  var readingListEl = document.getElementById("reading-list");
+  var readingEmpty = document.getElementById("reading-empty");
+  var clearReadingBtn = document.getElementById("clear-reading");
   var cards = Array.prototype.slice.call(
     document.querySelectorAll("#news-container .news-card")
   );
@@ -192,6 +195,131 @@
       showToast("复制失败：" + err.message, true);
     }
   }
+
+  // ── 阅读历史（localStorage） ──
+  // 数据结构：[{ title, link, source, summary, pub, read_at }]
+  var STORAGE_KEY = "ai_daily_reading_history";
+  var MAX_RECORDS = 200;
+
+  function loadReading() {
+    try {
+      var raw = localStorage.getItem(STORAGE_KEY);
+      return raw ? JSON.parse(raw) : [];
+    } catch (e) {
+      return [];
+    }
+  }
+
+  function saveReading(list) {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+    } catch (e) {
+      // 容量满或无痕模式：静默失败，不阻塞用户点击
+    }
+  }
+
+  function recordReading(card) {
+    var link = card.getAttribute("data-link") || card.querySelector("a")?.href || "";
+    if (!link) return;
+    var title = card.getAttribute("data-title") || card.querySelector(".card-title a")?.textContent?.trim() || "";
+    var source = card.getAttribute("data-source") || "";
+    var summary = card.getAttribute("data-summary") || "";
+    var pub = card.getAttribute("data-pub") || "";
+
+    var list = loadReading();
+    // 去重：同链接只保留最近一次
+    list = list.filter(function (it) { return it.link !== link; });
+    list.unshift({
+      title: title,
+      link: link,
+      source: source,
+      summary: summary,
+      pub: pub,
+      read_at: new Date().toISOString()
+    });
+    if (list.length > MAX_RECORDS) list = list.slice(0, MAX_RECORDS);
+    saveReading(list);
+  }
+
+  // 监听卡片标题链接点击 → 记录（不影响跳转）
+  document.addEventListener("click", function (e) {
+    var link = e.target.closest(".news-card .card-title a");
+    if (!link) return;
+    var card = link.closest(".news-card");
+    if (card) recordReading(card);
+    // 不阻止默认跳转，让用户正常打开原文
+  });
+
+  // 在「我的阅读」页面渲染列表
+  function renderReadingList() {
+    if (!readingListEl) return;
+    var list = loadReading();
+    readingListEl.innerHTML = "";
+    if (list.length === 0) {
+      if (readingEmpty) readingEmpty.hidden = false;
+      return;
+    }
+    if (readingEmpty) readingEmpty.hidden = true;
+    list.forEach(function (it) {
+      var article = document.createElement("article");
+      article.className = "news-card";
+      var head = document.createElement("div");
+      head.className = "card-head";
+      var src = document.createElement("span");
+      src.className = "src-name";
+      src.textContent = it.source || "未知来源";
+      head.appendChild(src);
+      var time = document.createElement("time");
+      time.className = "pub-time";
+      time.setAttribute("datetime", it.read_at || "");
+      time.textContent = "阅读于 " + fmtReadingTime(it.read_at);
+      head.appendChild(time);
+      article.appendChild(head);
+
+      var title = document.createElement("h3");
+      title.className = "card-title";
+      var a = document.createElement("a");
+      a.href = it.link;
+      a.target = "_blank";
+      a.rel = "noopener noreferrer";
+      a.textContent = it.title;
+      title.appendChild(a);
+      article.appendChild(title);
+
+      if (it.summary) {
+        var sum = document.createElement("p");
+        sum.className = "card-summary";
+        sum.textContent = it.summary;
+        article.appendChild(sum);
+      }
+      readingListEl.appendChild(article);
+    });
+  }
+
+  function fmtReadingTime(iso) {
+    if (!iso) return "未知时间";
+    try {
+      var d = new Date(iso);
+      var pad = function (n) { return n.toString().padStart(2, "0"); };
+      return d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate())
+        + " " + pad(d.getHours()) + ":" + pad(d.getMinutes());
+    } catch (e) {
+      return iso;
+    }
+  }
+
+  // 清空阅读历史
+  if (clearReadingBtn) {
+    clearReadingBtn.addEventListener("click", function () {
+      if (!confirm("确定清空全部阅读历史？此操作不可撤销。")) return;
+      saveReading([]);
+      renderReadingList();
+      showToast("已清空阅读历史");
+    });
+  }
+
+  // 如果当前页是「我的阅读」页（有 reading-list 容器），初始渲染
+  if (readingListEl) renderReadingList();
 
   // 初始：首页默认显示最近7天
   applyFilters();

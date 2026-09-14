@@ -216,6 +216,11 @@ def build_site() -> None:
         )
         (archive_dir_out / f"{date_str}.html").write_text(html, encoding="utf-8")
 
+    # 6) 渲染「我的阅读」页（纯静态壳，列表由 JS 从 localStorage 渲染）
+    tpl_reading = env.get_template("my-reading.html.j2")
+    html = tpl_reading.render(built_at=now_iso_utc())
+    (OUT_DIR / "my-reading.html").write_text(html, encoding="utf-8")
+
 
 def snapshot_today() -> None:
     """生成当日归档快照 data/archive/YYYY-MM-DD.json。

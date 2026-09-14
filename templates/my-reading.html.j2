@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>我的阅读 · 每日 AI 情报站</title>
+  <meta name="description" content="你点开过的文章列表，仅保存在本浏览器。">
+  <link rel="stylesheet" href="static/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap header-inner">
+      <div class="brand">
+        <span class="brand-mark">AI</span>
+        <div>
+          <h1>每日 AI 情报站</h1>
+          <p class="tagline">几分钟内看完近期值得关注的 AI 动态 · 每日自动更新</p>
+        </div>
+      </div>
+      <nav class="top-nav">
+        <a href="index.html">今日</a>
+        <a href="archive/index.html">浏览历史</a>
+        <a href="my-reading.html" class="active">我的阅读</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="filters" aria-label="阅读历史操作">
+      <p class="range-hint">这里列出你在本浏览器点开过的文章。数据只保存在本地（localStorage），不会上传服务器，不会跨设备同步。换浏览器或清缓存后会丢失。</p>
+      <div class="filter-row">
+        <button type="button" id="clear-reading" class="clear-btn">清空阅读历史</button>
+      </div>
+    </section>
+
+    <section class="news-list" aria-label="阅读历史列表">
+      <h2>我的阅读</h2>
+      <div id="news-container">
+        <div id="reading-list"></div>
+        <p id="reading-empty" class="empty-state">还没有阅读记录。回到 <a href="index.html">今日</a> 或 <a href="archive/index.html">浏览历史</a>，点开任意文章标题，它会自动出现在这里。</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <p>每日 AI 情报站 · 阅读历史仅存于本地浏览器</p>
+    </div>
+  </footer>
+
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+  <script src="static/app.js" defer></script>
+</body>
+</html>
