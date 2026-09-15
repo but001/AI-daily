@@ -11,7 +11,7 @@
   <header class="site-header">
     <div class="wrap header-inner">
       <div class="brand">
-        <span class="brand-mark">AI</span>
+        <img src="{{ static_root }}brand.png" alt="AI" class="brand-mark">
         <div>
           <h1>每日 AI 情报站</h1>
           <p class="tagline">几分钟内看完近期值得关注的 AI 动态 · 每日自动更新</p>
@@ -103,13 +103,13 @@
     {# ── 热点区 ── #}
     {% set hot_items = items | selectattr('is_hot', 'true') | list %}
     {% if hot_items %}
-    <section class="hot-zone" id="hot-zone" aria-label="今日热点">
-      <h2>今日热点</h2>
+    <section class="hot-zone" id="hot-zone" aria-label="近日热点">
+      <h2>近日热点</h2>
       <div class="hot-list">
         {% for it in hot_items %}
           <article class="news-card hot" data-source="{{ it.source }}" data-title="{{ it.title }}" data-summary="{{ it.summary }}" data-pub="{{ (it.published_at or '')[:10] }}">
             <div class="card-head">
-              <span class="badge badge-hot">热点</span>
+              <span class="badge badge-hot">近日热点</span>
               <span class="src-name">{{ it.source }}</span>
               <time class="pub-time" datetime="{{ it.published_at or '' }}">{{ it.published_at|fmt_time }}</time>
             </div>
