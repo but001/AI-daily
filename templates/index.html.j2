@@ -70,10 +70,7 @@
       <div class="date-popover" id="date-popover" hidden>
         <div class="popover-quick">
           <span class="popover-label">快捷：</span>
-          <button type="button" data-pop-quick="today">今天</button>
           <button type="button" data-pop-quick="yesterday">昨天</button>
-          <button type="button" data-pop-quick="7d">近 7 天</button>
-          <button type="button" data-pop-quick="30d">近 30 天</button>
           <button type="button" data-pop-quick="month">本月</button>
         </div>
         <div class="popover-range">
@@ -108,7 +105,6 @@
     {% if hot_items %}
     <section class="hot-zone" id="hot-zone" aria-label="今日热点">
       <h2>今日热点</h2>
-      <p class="hot-hint">基于关键词加权与当日发布时间的启发式高亮，仅作阅读参考。</p>
       <div class="hot-list">
         {% for it in hot_items %}
           <article class="news-card hot" data-source="{{ it.source }}" data-title="{{ it.title }}" data-summary="{{ it.summary }}" data-pub="{{ (it.published_at or '')[:10] }}">

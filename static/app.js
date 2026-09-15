@@ -47,16 +47,14 @@
       return bj.getFullYear() + "-" + p(bj.getMonth() + 1) + "-" + p(bj.getDate());
     })();
 
-    // 年份范围：从卡片数据最早年到今年
-    var minYear = new Date().getFullYear();
-    cards.forEach(function (c) {
-      var p = c.getAttribute("data-pub") || "";
-      if (p) {
-        var y = parseInt(p.slice(0, 4), 10);
-        if (!isNaN(y) && y < minYear) minYear = y;
-      }
-    });
-    var maxYear = new Date().getFullYear();
+    // 年份范围：限制为近两个月（起始下限 = 今日 - 60 天）
+    var today = new Date(todayStr + "T00:00:00");
+    var minDate = new Date(today.getTime() - 60 * 86400000);
+    var maxYear = today.getFullYear();
+    var minYear = minDate.getFullYear();
+    // 起始月份下限：minDate 所在月；结束月份上下限：今日所在月
+    var minStartMonth = minDate.getMonth() + 1;
+    var maxEndMonth = today.getMonth() + 1;
 
     function fillYear(sel) {
       sel.innerHTML = "";
@@ -89,6 +87,30 @@
     var parts = todayStr.split("-");
     sy.value = parts[0]; sm.value = parseInt(parts[1], 10); sd.value = parseInt(parts[2], 10);
     ey.value = parts[0]; em.value = parseInt(parts[1], 10); ed.value = parseInt(parts[2], 10);
+  }
+
+  // 校验自定义日期：起止不得早于今日-60天，起始不得晚于结束
+  function validateCustomRange(startStr, endStr) {
+    var meta = document.querySelector("meta[name='today']");
+    var todayStr = meta ? meta.content : (function () {
+      var d = new Date();
+      var utc = d.getTime() + d.getTimezoneOffset() * 60000;
+      var bj = new Date(utc + 8 * 3600000);
+      var p = function (n) { return n.toString().padStart(2, "0"); };
+      return bj.getFullYear() + "-" + p(bj.getMonth() + 1) + "-" + p(bj.getDate());
+    })();
+    var today = new Date(todayStr + "T00:00:00");
+    var minDate = new Date(today.getTime() - 60 * 86400000);
+    var minStr = minDate.getFullYear() + "-" +
+      (minDate.getMonth() + 1).toString().padStart(2, "0") + "-" +
+      minDate.getDate().toString().padStart(2, "0");
+    if (startStr < minStr) {
+      return "起始日期不得早于 " + minStr + "（仅限近两个月）";
+    }
+    if (startStr > endStr) {
+      return "起始日期不得晚于结束日期";
+    }
+    return "";
   }
 
   // 读取当前下拉值，返回 [startDateStr, endDateStr] 或 null
@@ -259,12 +281,19 @@
     if (d) d.value = parseInt(parts[2], 10);
   }
 
-  // 弹出层：确定 = 应用自定义日期段；清除 = 回到默认"最近 7 天"
+  // 弹出层：确定 = 应用自定义日期段（校验起始≤结束 + 不早于近两月）；清除 = 回到默认"最近 7 天"
   var dateApplyBtn = document.getElementById("date-apply");
   var dateResetBtn = document.getElementById("date-reset");
   if (dateApplyBtn) {
     dateApplyBtn.addEventListener("click", function () {
-      activeDateRange = readDateRange();
+      var range = readDateRange();
+      if (!range) return;
+      var err = validateCustomRange(range[0], range[1]);
+      if (err) {
+        alert(err);
+        return;
+      }
+      activeDateRange = range;
       activeQuick = "custom";
       // 主按钮组取消高亮
       if (dateRange) {

@@ -4,6 +4,10 @@
 - 主键：NewsItem.id（基于 original_link 规范化后的 sha1）
 - 次级：标题归一化（去空白+小写）后完全相同视为重复
 
+数据范围限制：
+- 仅保留最近 60 天的条目（按 published_at 判断；缺失时按 fetched_at 兜底）
+- 超出 60 天的旧条目在合并时淘汰，避免数据无限增长
+
 不变量：
 - 单源失败不会清空旧数据：本模块只追加，绝不删除
 - "重复导入同输入不产生重复"：相同 id 或相同归一标题，直接跳过
@@ -14,12 +18,40 @@ from __future__ import annotations
 
 import json
 from dataclasses import dataclass
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import List
 
 from .models import NewsItem, normalize_title
 
 NEWS_PATH = Path(__file__).resolve().parent.parent / "data" / "news.json"
+
+# 数据保留窗口：只保留最近 N 天的条目
+RETENTION_DAYS = 60
+
+
+def _is_within_retention(d: dict, now_iso: str) -> bool:
+    """判断条目是否在保留窗口内。
+
+    有 published_at 用它判断；否则用 fetched_at 兜底。
+    两者都无则保留（视为"刚采集"）。
+    """
+    ts = d.get("published_at") or d.get("fetched_at") or ""
+    if not ts:
+        return True
+    try:
+        t = datetime.fromisoformat(ts)
+    except ValueError:
+        return True
+    if t.tzinfo is None:
+        t = t.replace(tzinfo=timezone.utc)
+    try:
+        now = datetime.fromisoformat(now_iso)
+    except ValueError:
+        return True
+    if now.tzinfo is None:
+        now = now.replace(tzinfo=timezone.utc)
+    return (now - t) <= timedelta(days=RETENTION_DAYS)
 
 
 @dataclass
@@ -78,6 +110,11 @@ def merge(new_items: List[NewsItem], news_path: Path = NEWS_PATH) -> MergeResult
 
     # 排序：最新在前
     existing.sort(key=_sort_key, reverse=True)
+
+    # 应用保留窗口：淘汰 60 天前的条目
+    from .models import now_iso_utc
+    now_iso = now_iso_utc()
+    existing = [d for d in existing if _is_within_retention(d, now_iso)]
 
     news_path.write_text(
         json.dumps(existing, ensure_ascii=False, indent=2), encoding="utf-8"
