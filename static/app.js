@@ -464,18 +464,26 @@
     list.forEach(function (it) {
       var article = document.createElement("article");
       article.className = "news-card";
+
+      var timeWrap = document.createElement("div");
+      timeWrap.className = "timeline-time";
+      var time = document.createElement("time");
+      time.className = "pub-time";
+      time.setAttribute("datetime", it.read_at || "");
+      time.textContent = fmtReadingTime(it.read_at);
+      timeWrap.appendChild(time);
+      article.appendChild(timeWrap);
+
+      var body = document.createElement("div");
+      body.className = "timeline-body";
+
       var head = document.createElement("div");
       head.className = "card-head";
       var src = document.createElement("span");
       src.className = "src-name";
       src.textContent = it.source || "未知来源";
       head.appendChild(src);
-      var time = document.createElement("time");
-      time.className = "pub-time";
-      time.setAttribute("datetime", it.read_at || "");
-      time.textContent = "阅读于 " + fmtReadingTime(it.read_at);
-      head.appendChild(time);
-      article.appendChild(head);
+      body.appendChild(head);
 
       var title = document.createElement("h3");
       title.className = "card-title";
@@ -485,14 +493,15 @@
       a.rel = "noopener noreferrer";
       a.textContent = it.title;
       title.appendChild(a);
-      article.appendChild(title);
+      body.appendChild(title);
 
       if (it.summary) {
         var sum = document.createElement("p");
         sum.className = "card-summary";
         sum.textContent = it.summary;
-        article.appendChild(sum);
+        body.appendChild(sum);
       }
+      article.appendChild(body);
       readingListEl.appendChild(article);
     });
   }
@@ -502,7 +511,7 @@
     try {
       var d = new Date(iso);
       var pad = function (n) { return n.toString().padStart(2, "0"); };
-      return d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate())
+      return pad(d.getMonth() + 1) + "-" + pad(d.getDate())
         + " " + pad(d.getHours()) + ":" + pad(d.getMinutes());
     } catch (e) {
       return iso;

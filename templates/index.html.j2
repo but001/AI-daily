@@ -28,12 +28,13 @@
     {# ── 状态栏：最近更新与来源采集状态 ── #}
     <section class="status-bar" aria-label="最近更新状态">
       {% if latest_run.fetched_at %}
-        <span class="status-label">最近更新</span>
+        <span class="status-label">更新于</span>
         <time datetime="{{ latest_run.fetched_at }}">{{ latest_run.fetched_at|fmt_time }}</time>
+        <span class="status-label">·</span>
         {% for src, st in latest_run.status.items() %}
           {% set failed = st.startswith('fail') %}
-          <span class="src-pill {{ 'src-fail' if failed else 'src-ok' }}" title="{{ st }}">
-            {{ src }}{% if failed %} ✕{% else %} ✓{% endif %}
+          <span class="src-pill {{ 'src-fail' if failed }}" title="{{ st }}">
+            {{ src }}{% if failed %}（失败）{% endif %}
           </span>
         {% endfor %}
       {% else %}
@@ -109,7 +110,6 @@
         {% for it in hot_items %}
           <article class="news-card hot" data-source="{{ it.source }}" data-title="{{ it.title }}" data-summary="{{ it.summary }}" data-pub="{{ (it.published_at or '')[:10] }}">
             <div class="card-head">
-              <span class="badge badge-hot">近日热点</span>
               <span class="src-name">{{ it.source }}</span>
               <time class="pub-time" datetime="{{ it.published_at or '' }}">{{ it.published_at|fmt_time }}</time>
             </div>
@@ -117,11 +117,6 @@
               <a href="{{ it.original_link }}" target="_blank" rel="noopener noreferrer">{{ it.title }}</a>
             </h3>
             {% if it.summary %}<p class="card-summary">{{ it.summary }}</p>{% endif %}
-            <div class="card-meta">
-              {% if it.ai_generated %}<span class="ai-flag" title="摘要由AI生成">AI 摘要</span>{% endif %}
-              <span class="lang-flag" title="原文语言">{{ '中文' if it.lang == 'zh' else '英文' }}</span>
-              <button type="button" class="copy-md" data-title="{{ it.title }}" data-summary="{{ it.summary }}" data-link="{{ it.original_link }}" data-source="{{ it.source }}" data-time="{{ it.published_at|fmt_time }}">复制为 Markdown 引用</button>
-            </div>
           </article>
         {% endfor %}
       </div>
@@ -134,19 +129,23 @@
       <div id="news-container">
         {% for it in items %}
           <article class="news-card" data-source="{{ it.source }}" data-title="{{ it.title }}" data-summary="{{ it.summary }}" data-pub="{{ (it.published_at or '')[:10] }}">
-            <div class="card-head">
-              <span class="src-name">{{ it.source }}</span>
+            <div class="timeline-time">
               <time class="pub-time" datetime="{{ it.published_at or '' }}">{{ it.published_at|fmt_time }}</time>
-              <span class="fetched-time" title="采集时间">采集于 {{ it.fetched_at|fmt_time }}</span>
             </div>
-            <h3 class="card-title">
-              <a href="{{ it.original_link }}" target="_blank" rel="noopener noreferrer">{{ it.title }}</a>
-            </h3>
-            {% if it.summary %}<p class="card-summary">{{ it.summary }}</p>{% endif %}
-            <div class="card-meta">
-              {% if it.ai_generated %}<span class="ai-flag" title="摘要由AI生成">AI 摘要</span>{% endif %}
-              <span class="lang-flag" title="原文语言">{{ '中文' if it.lang == 'zh' else '英文' }}</span>
-              <button type="button" class="copy-md" data-title="{{ it.title }}" data-summary="{{ it.summary }}" data-link="{{ it.original_link }}" data-source="{{ it.source }}" data-time="{{ it.published_at|fmt_time }}">复制为 Markdown 引用</button>
+            <div class="timeline-body">
+              <div class="card-head">
+                <span class="src-name">{{ it.source }}</span>
+                <span class="fetched-time" title="采集时间">采集于 {{ it.fetched_at|fmt_time }}</span>
+              </div>
+              <h3 class="card-title">
+                <a href="{{ it.original_link }}" target="_blank" rel="noopener noreferrer">{{ it.title }}</a>
+              </h3>
+              {% if it.summary %}<p class="card-summary">{{ it.summary }}</p>{% endif %}
+              <div class="card-meta">
+                {% if it.ai_generated %}<span class="ai-flag" title="摘要由AI生成">AI 摘要</span>{% endif %}
+                <span class="lang-flag" title="原文语言">{{ '中文' if it.lang == 'zh' else '英文' }}</span>
+                <button type="button" class="copy-md" data-title="{{ it.title }}" data-summary="{{ it.summary }}" data-link="{{ it.original_link }}" data-source="{{ it.source }}" data-time="{{ it.published_at|fmt_time }}">复制为 Markdown 引用</button>
+              </div>
             </div>
           </article>
         {% endfor %}
