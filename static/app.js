@@ -465,25 +465,22 @@
       var article = document.createElement("article");
       article.className = "news-card";
 
-      var timeWrap = document.createElement("div");
-      timeWrap.className = "timeline-time";
-      var time = document.createElement("time");
-      time.className = "pub-time";
-      time.setAttribute("datetime", it.read_at || "");
-      time.textContent = fmtReadingTime(it.read_at);
-      timeWrap.appendChild(time);
-      article.appendChild(timeWrap);
-
-      var body = document.createElement("div");
-      body.className = "timeline-body";
-
       var head = document.createElement("div");
       head.className = "card-head";
       var src = document.createElement("span");
       src.className = "src-name";
       src.textContent = it.source || "未知来源";
       head.appendChild(src);
-      body.appendChild(head);
+      var sep = document.createElement("span");
+      sep.className = "dot-sep";
+      sep.textContent = "·";
+      head.appendChild(sep);
+      var time = document.createElement("time");
+      time.className = "pub-time";
+      time.setAttribute("datetime", it.read_at || "");
+      time.textContent = fmtReadingTime(it.read_at);
+      head.appendChild(time);
+      article.appendChild(head);
 
       var title = document.createElement("h3");
       title.className = "card-title";
@@ -493,15 +490,14 @@
       a.rel = "noopener noreferrer";
       a.textContent = it.title;
       title.appendChild(a);
-      body.appendChild(title);
+      article.appendChild(title);
 
       if (it.summary) {
         var sum = document.createElement("p");
         sum.className = "card-summary";
         sum.textContent = it.summary;
-        body.appendChild(sum);
+        article.appendChild(sum);
       }
-      article.appendChild(body);
       readingListEl.appendChild(article);
     });
   }

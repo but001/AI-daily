@@ -19,10 +19,10 @@ html, body {
   padding: 0;
   background: var(--bg);
   color: var(--text);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
-    "Microsoft YaHei", "Hiragino Sans GB", sans-serif;
-  font-size: 15px;
-  line-height: 1.7;
+  font-family: system-ui, -apple-system, "PingFang SC", "Microsoft YaHei",
+    "Hiragino Sans GB", sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -57,7 +57,7 @@ a:hover { text-decoration: underline; }
   margin: 0;
   font-size: 18px;
   font-weight: 700;
-  font-family: Georgia, "Noto Serif SC", "Songti SC", serif;
+  font-family: Georgia, "Noto Serif SC", serif;
 }
 .tagline { margin: 2px 0 0; font-size: 12px; color: var(--text-muted); }
 
@@ -105,16 +105,16 @@ a:hover { text-decoration: underline; }
 }
 #search {
   width: 100%;
-  padding: 8px 10px;
-  border: 1px solid var(--border);
-  border-radius: 2px;
-  font-size: 14px;
-  background: var(--surface);
+  padding: 6px 0 8px;
+  border: none;
+  border-bottom: 1px solid var(--border);
+  font-size: 15px;
+  background: transparent;
   color: var(--text);
 }
 #search:focus {
   outline: none;
-  border-color: var(--primary);
+  border-bottom-color: var(--text);
 }
 .filter-row {
   display: flex;
@@ -140,22 +140,23 @@ a:hover { text-decoration: underline; }
 }
 .date-range {
   display: inline-flex;
-  align-items: center;
-  gap: 2px;
+  align-items: baseline;
+  gap: 14px;
 }
 .date-range button {
-  border: 1px solid var(--border);
-  background: var(--surface);
+  border: none;
+  background: none;
   color: var(--text-muted);
-  padding: 4px 10px;
+  padding: 0;
   font-size: 13px;
   cursor: pointer;
-  border-radius: 2px;
+  border-bottom: 1px solid transparent;
 }
+.date-range button:hover { color: var(--text); }
 .date-range button.active {
-  background: var(--primary);
-  color: #fff;
-  border-color: var(--primary);
+  color: var(--text);
+  font-weight: 600;
+  border-bottom-color: var(--primary);
 }
 
 /* 自定义日期弹出层 */
@@ -225,14 +226,14 @@ a:hover { text-decoration: underline; }
 .clear-btn {
   margin-left: auto;
   background: transparent;
-  border: 1px solid var(--border);
+  border: none;
   color: var(--text-muted);
-  padding: 4px 10px;
-  border-radius: 2px;
+  padding: 0;
   font-size: 13px;
   cursor: pointer;
+  text-decoration: underline;
 }
-.clear-btn:hover { border-color: var(--primary); color: var(--primary); }
+.clear-btn:hover { color: var(--primary); }
 .range-hint {
   margin: 10px 0 0;
   font-size: 12px;
@@ -261,14 +262,14 @@ a:hover { text-decoration: underline; }
 }
 .news-card.hot {
   border-bottom: 1px solid var(--border);
-  padding: 14px 0;
+  padding: 24px 0;
 }
 .news-card.hot:last-child { border-bottom: 0; }
 .news-card.hot .card-title {
   font-size: 22px;
   font-weight: 700;
   line-height: 1.35;
-  font-family: Georgia, "Noto Serif SC", "Songti SC", serif;
+  font-family: Georgia, "Noto Serif SC", serif;
   color: var(--text);
 }
 .news-card.hot .card-title a { color: var(--text); }
@@ -294,50 +295,38 @@ a:hover { text-decoration: underline; }
   flex-direction: column;
 }
 .news-card {
-  display: flex;
-  gap: 16px;
-  padding: 14px 0;
+  display: block;
+  padding: 24px 0;
   border-bottom: 1px solid var(--border);
 }
+.news-card:last-child { border-bottom: none; }
 .news-card.hidden { display: none; }
 .hot-zone.hidden { display: none; }
-.search-wrap { display: flex; gap: 8px; margin-bottom: 10px; }
+.search-wrap { display: flex; align-items: baseline; gap: 8px; margin-bottom: 10px; }
 .search-wrap #search { flex: 1; }
 .search-btn {
-  padding: 8px 16px;
-  border: 1px solid var(--primary);
-  border-radius: 2px;
-  background: var(--primary);
-  color: #fff;
-  font-size: 14px;
+  background: none;
+  border: none;
+  border-bottom: 1px solid var(--text);
+  color: var(--text);
+  font-size: 15px;
   cursor: pointer;
+  padding: 4px 0;
   white-space: nowrap;
-}
-.search-btn:hover { opacity: .88; }
-
-/* 时间线：左侧时间，右侧内容 */
-.timeline-time {
-  flex-shrink: 0;
-  width: 100px;
-  font-size: 11px;
-  color: var(--text-muted);
-  padding-top: 4px;
-  font-variant-numeric: tabular-nums;
   line-height: 1.4;
 }
-.timeline-body {
-  flex: 1;
-  min-width: 0;
-}
+.search-btn:hover { color: var(--primary); border-bottom-color: var(--primary); }
+
 .card-head {
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
-  gap: 8px;
+  align-items: baseline;
+  gap: 6px;
   font-size: 12px;
   color: var(--text-muted);
-  margin-bottom: 4px;
+  margin-bottom: 6px;
 }
+.dot-sep { color: #c9c2b4; }
 .badge {
   display: inline-block;
   padding: 1px 6px;
@@ -349,7 +338,7 @@ a:hover { text-decoration: underline; }
 .badge-hot { color: var(--primary); border-color: var(--primary); }
 .src-name {
   font-weight: 600;
-  color: var(--text);
+  color: var(--text-muted);
   font-size: 12px;
 }
 .pub-time { color: var(--text-muted); font-size: 12px; }
@@ -360,22 +349,22 @@ a:hover { text-decoration: underline; }
 }
 .card-title {
   margin: 0;
-  font-size: 15px;
-  line-height: 1.5;
-  font-weight: 600;
-  word-break: break-word;
-  overflow-wrap: anywhere;
-  font-family: Georgia, "Noto Serif SC", "Songti SC", serif;
+  font-size: 20px;
+  line-height: 1.4;
+  font-weight: 700;
+  overflow-wrap: break-word;
+  font-family: Georgia, "Noto Serif SC", serif;
 }
 .card-title a { color: var(--text); }
 .card-title a:hover { color: var(--primary); text-decoration: underline; }
 .card-summary {
-  margin: 4px 0 0;
-  font-size: 13px;
-  color: var(--text-muted);
+  margin: 8px 0 0;
+  font-size: 14px;
+  color: #6b6b6b;
   line-height: 1.6;
+  font-family: system-ui, -apple-system, sans-serif;
   display: -webkit-box;
-  -webkit-line-clamp: 2;
+  -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
@@ -384,7 +373,7 @@ a:hover { text-decoration: underline; }
   flex-wrap: wrap;
   align-items: center;
   gap: 8px;
-  margin-top: 8px;
+  margin-top: 10px;
 }
 .ai-flag, .lang-flag {
   font-size: 11px;
@@ -397,14 +386,14 @@ a:hover { text-decoration: underline; }
 .copy-md {
   margin-left: auto;
   background: transparent;
-  border: 1px solid var(--border);
+  border: none;
+  border-bottom: 1px solid var(--border);
   color: var(--text-muted);
-  padding: 3px 10px;
-  border-radius: 2px;
+  padding: 1px 0;
   font-size: 12px;
   cursor: pointer;
 }
-.copy-md:hover { color: var(--primary); border-color: var(--primary); }
+.copy-md:hover { color: var(--primary); border-bottom-color: var(--primary); }
 
 /* ── 无结果 ── */
 .empty-state {
@@ -469,9 +458,7 @@ a:hover { text-decoration: underline; }
   .top-nav { width: 100%; justify-content: flex-start; }
   .filter-row { flex-direction: column; align-items: stretch; }
   .filter-row .clear-btn { margin-left: 0; }
-  .news-card { flex-direction: row; gap: 10px; }
-  .timeline-time { width: 72px; font-size: 10px; }
-  .card-summary { -webkit-line-clamp: 2; }
+  .card-title { font-size: 18px; }
   .copy-md { margin-left: 0; }
   .date-popover { min-width: auto; left: 0; right: 0; }
 }

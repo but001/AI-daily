@@ -108,9 +108,10 @@
       <h2>近日热点</h2>
       <div class="hot-list">
         {% for it in hot_items %}
-          <article class="news-card hot" data-source="{{ it.source }}" data-title="{{ it.title }}" data-summary="{{ it.summary }}" data-pub="{{ (it.published_at or '')[:10] }}">
+          <article class="news-card hot" data-source="{{ it.source }}" data-title="{{ it.title }}" data-summary="{{ it.summary }}" data-link="{{ it.original_link }}" data-pub="{{ (it.published_at or '')[:10] }}">
             <div class="card-head">
               <span class="src-name">{{ it.source }}</span>
+              <span class="dot-sep">·</span>
               <time class="pub-time" datetime="{{ it.published_at or '' }}">{{ it.published_at|fmt_time }}</time>
             </div>
             <h3 class="card-title">
@@ -128,24 +129,20 @@
       <h2>全部资讯（共 <span id="visible-count">{{ items|length }}</span> 条）</h2>
       <div id="news-container">
         {% for it in items %}
-          <article class="news-card" data-source="{{ it.source }}" data-title="{{ it.title }}" data-summary="{{ it.summary }}" data-pub="{{ (it.published_at or '')[:10] }}">
-            <div class="timeline-time">
+          <article class="news-card" data-source="{{ it.source }}" data-title="{{ it.title }}" data-summary="{{ it.summary }}" data-link="{{ it.original_link }}" data-pub="{{ (it.published_at or '')[:10] }}">
+            <div class="card-head">
+              <span class="src-name">{{ it.source }}</span>
+              <span class="dot-sep">·</span>
               <time class="pub-time" datetime="{{ it.published_at or '' }}">{{ it.published_at|fmt_time }}</time>
             </div>
-            <div class="timeline-body">
-              <div class="card-head">
-                <span class="src-name">{{ it.source }}</span>
-                <span class="fetched-time" title="采集时间">采集于 {{ it.fetched_at|fmt_time }}</span>
-              </div>
-              <h3 class="card-title">
-                <a href="{{ it.original_link }}" target="_blank" rel="noopener noreferrer">{{ it.title }}</a>
-              </h3>
-              {% if it.summary %}<p class="card-summary">{{ it.summary }}</p>{% endif %}
-              <div class="card-meta">
-                {% if it.ai_generated %}<span class="ai-flag" title="摘要由AI生成">AI 摘要</span>{% endif %}
-                <span class="lang-flag" title="原文语言">{{ '中文' if it.lang == 'zh' else '英文' }}</span>
-                <button type="button" class="copy-md" data-title="{{ it.title }}" data-summary="{{ it.summary }}" data-link="{{ it.original_link }}" data-source="{{ it.source }}" data-time="{{ it.published_at|fmt_time }}">复制为 Markdown 引用</button>
-              </div>
+            <h3 class="card-title">
+              <a href="{{ it.original_link }}" target="_blank" rel="noopener noreferrer">{{ it.title }}</a>
+            </h3>
+            {% if it.summary %}<p class="card-summary">{{ it.summary }}</p>{% endif %}
+            <div class="card-meta">
+              {% if it.ai_generated %}<span class="ai-flag" title="摘要由AI生成">AI 摘要</span>{% endif %}
+              <span class="lang-flag" title="原文语言">{{ '中文' if it.lang == 'zh' else '英文' }}</span>
+              <button type="button" class="copy-md" data-title="{{ it.title }}" data-summary="{{ it.summary }}" data-link="{{ it.original_link }}" data-source="{{ it.source }}" data-time="{{ it.published_at|fmt_time }}">复制为 Markdown 引用</button>
             </div>
           </article>
         {% endfor %}
