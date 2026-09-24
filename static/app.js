@@ -546,4 +546,23 @@
       mobileFilterBtn.setAttribute("aria-expanded", isOpen ? "true" : "false");
     });
   }
+
+  // 元数据零值兜底：points/comments <= 0 或为空时不显示"分/评论"（含历史脏数据）；
+  // 全为 0/无附加信息时，来源与时间之间改用 · 连接
+  document.querySelectorAll(".news-card").forEach(function (card) {
+    var head = card.querySelector(".card-head");
+    if (!head) return;
+    head.querySelectorAll(".meta-extra").forEach(function (el) {
+      var text = (el.textContent || "").trim();
+      if (/^0\s*(分|评论)$/.test(text)) {
+        var prev = el.previousElementSibling;
+        if (prev && prev.className === "sep") prev.remove();
+        el.remove();
+      }
+    });
+    if (head.querySelectorAll(".meta-extra").length === 0) {
+      var sep = head.querySelector(".sep");
+      if (sep) sep.textContent = "·";
+    }
+  });
 })();

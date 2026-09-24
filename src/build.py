@@ -192,7 +192,7 @@ def build_site() -> None:
 
     # 5) 渲染「我的阅读」页（纯静态壳，列表由 JS 从 localStorage 渲染）
     tpl_reading = env.get_template("my-reading.html.j2")
-    html = tpl_reading.render(built_at=now_iso_utc())
+    html = tpl_reading.render(built_at=now_iso_utc(), today=_today_date_str())
     (OUT_DIR / "my-reading.html").write_text(html, encoding="utf-8")
 
 

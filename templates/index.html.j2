@@ -11,11 +11,8 @@
   <header class="site-header">
     <div class="wrap header-inner">
       <div class="brand">
-        <img src="static/brand.png" alt="AI" class="brand-mark">
-        <div>
-          <h1>每日 AI 情报站</h1>
-          <p class="tagline">几分钟内看完近期值得关注的 AI 动态 · 每日自动更新</p>
-        </div>
+        <h1>每日 AI 情报站</h1>
+        <p class="tagline">{{ today[:4] }}年{{ today[5:7]|int }}月{{ today[8:10]|int }}日 · 持续更新中</p>
       </div>
       <nav class="top-nav">
         <a href="index.html" class="active">今日</a>
@@ -25,23 +22,6 @@
   </header>
 
   <main class="wrap">
-    {# ── 状态栏：最近更新与来源采集状态 ── #}
-    <section class="status-bar" aria-label="最近更新状态">
-      {% if latest_run.fetched_at %}
-        <span class="status-label">更新于</span>
-        <time datetime="{{ latest_run.fetched_at }}">{{ latest_run.fetched_at|fmt_time }}</time>
-        <span class="status-label">·</span>
-        {% for src, st in latest_run.status.items() %}
-          {% set failed = st.startswith('fail') %}
-          <span class="src-pill {{ 'src-fail' if failed }}" title="{{ st }}">
-            {{ src }}{% if failed %}（失败）{% endif %}
-          </span>
-        {% endfor %}
-      {% else %}
-        <span class="status-label">暂无运行记录</span>
-      {% endif %}
-    </section>
-
     {# 移动端：折叠的筛选区展开按钮 #}
     <button type="button" id="mobile-filter-btn" class="mobile-filter-btn" aria-expanded="false">🔍　筛选/搜索</button>
 
@@ -68,7 +48,6 @@
         </div>
         <button type="button" id="clear-filters" class="clear-btn">清除条件</button>
       </div>
-      <p class="range-hint">日期口径：发布时间（按北京时区）；缺失时间不参与日期筛选。</p>
 
       {# 自定义日期弹出层（点"自定义…"才显示） #}
       <div class="date-popover" id="date-popover" hidden>
@@ -165,7 +144,10 @@
           <a href="{{ s.name }}" target="_blank" rel="noopener noreferrer">{{ s.name }}</a>{% if not loop.last %} · {% endif %}
         {% endfor %}
       </p>
-      <p class="footer-meta">构建时间（UTC）：{{ built_at }} · 原文版权归原作者所有</p>
+      <p class="footer-meta">
+        {% if latest_run.fetched_at %}更新于 {{ latest_run.fetched_at|fmt_time }} ·{% endif %}
+        每日自动更新{% for src, st in latest_run.status.items() %}{% if st.startswith('fail') %} · {{ src }} 采集失败{% endif %}{% endfor %} · 构建时间（UTC）：{{ built_at }} · 原文版权归原作者所有
+      </p>
     </div>
   </footer>
 
