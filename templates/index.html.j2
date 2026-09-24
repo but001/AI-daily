@@ -111,8 +111,10 @@
           <article class="news-card hot" data-source="{{ it.source }}" data-title="{{ it.title }}" data-summary="{{ it.summary }}" data-link="{{ it.original_link }}" data-pub="{{ (it.published_at or '')[:10] }}">
             <div class="card-head">
               <span class="src-name">{{ it.source }}</span>
-              <span class="dot-sep">·</span>
+              <span class="sep">/</span>
               <time class="pub-time" datetime="{{ it.published_at or '' }}">{{ it.published_at|fmt_time }}</time>
+              {% if it.points is not none %}<span class="sep">/</span><span class="meta-extra">{{ it.points }} 分</span>{% endif %}
+              {% if it.comments is not none %}<span class="sep">/</span><span class="meta-extra">{{ it.comments }} 评论</span>{% endif %}
             </div>
             <h3 class="card-title">
               <a href="{{ it.original_link }}" target="_blank" rel="noopener noreferrer">{{ it.title }}</a>
@@ -132,8 +134,10 @@
           <article class="news-card" data-source="{{ it.source }}" data-title="{{ it.title }}" data-summary="{{ it.summary }}" data-link="{{ it.original_link }}" data-pub="{{ (it.published_at or '')[:10] }}">
             <div class="card-head">
               <span class="src-name">{{ it.source }}</span>
-              <span class="dot-sep">·</span>
+              <span class="sep">/</span>
               <time class="pub-time" datetime="{{ it.published_at or '' }}">{{ it.published_at|fmt_time }}</time>
+              {% if it.points is not none %}<span class="sep">/</span><span class="meta-extra">{{ it.points }} 分</span>{% endif %}
+              {% if it.comments is not none %}<span class="sep">/</span><span class="meta-extra">{{ it.comments }} 评论</span>{% endif %}
             </div>
             <h3 class="card-title">
               <a href="{{ it.original_link }}" target="_blank" rel="noopener noreferrer">{{ it.title }}</a>

@@ -472,8 +472,8 @@
       src.textContent = it.source || "未知来源";
       head.appendChild(src);
       var sep = document.createElement("span");
-      sep.className = "dot-sep";
-      sep.textContent = "·";
+      sep.className = "sep";
+      sep.textContent = "/";
       head.appendChild(sep);
       var time = document.createElement("time");
       time.className = "pub-time";

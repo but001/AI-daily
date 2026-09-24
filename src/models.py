@@ -61,6 +61,8 @@ class NewsItem:
     published_at: Optional[str] = None  # ISO8601 带时区；缺失为 None
     ai_generated: bool = False          # 摘要/翻译是否AI生成，默认否（来自源原生）
     lang: str = "zh"                     # 原文语言
+    points: Optional[int] = None         # HN 等源的点赞数；无此信息的源为 None
+    comments: Optional[int] = None       # 评论数；无此信息的源为 None
     # 热点高亮标记，由 build 阶段启发式判定，不参与去重
     is_hot: bool = field(default=False, compare=False)
 

@@ -12,7 +12,7 @@ from typing import List
 import feedparser
 
 from ..models import NewsItem, make_id, now_iso_utc
-from ._common import http_get, parse_struct_time, strip_html
+from ._common import clean_hn_meta, http_get, parse_struct_time, strip_html
 
 
 def fetch(config: dict) -> List[NewsItem]:
@@ -39,6 +39,8 @@ def fetch(config: dict) -> List[NewsItem]:
         summary = strip_html(
             entry.get("description") or entry.get("summary") or ""
         )
+        # 剥离 hnrss 元数据标签（Article URL / Comments URL / Points / Comments）
+        summary, points, comments = clean_hn_meta(summary)
         published_at = parse_struct_time(entry.get("published_parsed"))
 
         items.append(
@@ -53,6 +55,8 @@ def fetch(config: dict) -> List[NewsItem]:
                 fetched_at=fetched_at,
                 ai_generated=False,
                 lang=lang,
+                points=points,
+                comments=comments,
             )
         )
     return items

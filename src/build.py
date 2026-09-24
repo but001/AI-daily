@@ -26,6 +26,7 @@ from jinja2 import Environment, FileSystemLoader, select_autoescape
 from . import fetch as fetch_mod
 from . import dedupe as dedupe_mod
 from .models import now_iso_utc
+from .sources._common import clean_hn_meta
 
 ROOT = Path(__file__).resolve().parent.parent
 TEMPLATES_DIR = ROOT / "templates"
@@ -137,6 +138,15 @@ def build_site() -> None:
 
     # 1) 读取数据
     news = dedupe_mod.load_news()  # List[dict]
+    # 兜底清洗：旧 data/news.json 中可能残留未剥离的 hnrss 元数据标签
+    # （fetch 阶段已清洗新数据，这里只处理历史遗留，避免界面显示裸链接）
+    for item in news:
+        cleaned, points, comments = clean_hn_meta(item.get("summary") or "")
+        item["summary"] = cleaned
+        if points is not None:
+            item["points"] = points
+        if comments is not None:
+            item["comments"] = comments
     news = mark_hot(news, top_n=3)
     fetch_log = {}
     fp = dedupe_mod.NEWS_PATH.parent / "fetch_log.json"

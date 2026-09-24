@@ -105,16 +105,15 @@ a:hover { text-decoration: underline; }
 }
 #search {
   width: 100%;
-  padding: 6px 0 8px;
-  border: none;
-  border-bottom: 1px solid var(--border);
+  padding: 8px 10px;
+  border: 1px solid #e7e2d8;
   font-size: 15px;
   background: transparent;
   color: var(--text);
 }
 #search:focus {
   outline: none;
-  border-bottom-color: var(--text);
+  border-color: var(--text);
 }
 .filter-row {
   display: flex;
@@ -242,7 +241,8 @@ a:hover { text-decoration: underline; }
 
 /* ── 热点区：报纸头条排版 ── */
 .hot-zone {
-  padding: 16px 0;
+  padding: 24px 0 16px;
+  border-top: 2px solid var(--text);
   border-bottom: 2px solid var(--text);
   margin-bottom: 0;
 }
@@ -266,17 +266,19 @@ a:hover { text-decoration: underline; }
 }
 .news-card.hot:last-child { border-bottom: 0; }
 .news-card.hot .card-title {
-  font-size: 22px;
   font-weight: 700;
   line-height: 1.35;
   font-family: Georgia, "Noto Serif SC", serif;
   color: var(--text);
 }
+.news-card.hot:first-child .card-title {
+  font-size: 22px;
+}
 .news-card.hot .card-title a { color: var(--text); }
 .news-card.hot .card-title a:hover { color: var(--primary); }
 .news-card.hot .card-summary {
   font-size: 14px;
-  color: var(--text-muted);
+  color: #404040;
   margin-top: 6px;
 }
 
@@ -296,7 +298,7 @@ a:hover { text-decoration: underline; }
 }
 .news-card {
   display: block;
-  padding: 24px 0;
+  padding: 24px 0 32px;
   border-bottom: 1px solid var(--border);
 }
 .news-card:last-child { border-bottom: none; }
@@ -307,26 +309,33 @@ a:hover { text-decoration: underline; }
 .search-btn {
   background: none;
   border: none;
-  border-bottom: 1px solid var(--text);
-  color: var(--text);
+  color: #171717;
   font-size: 15px;
   cursor: pointer;
-  padding: 4px 0;
+  padding: 0;
   white-space: nowrap;
   line-height: 1.4;
+  text-decoration: underline;
 }
-.search-btn:hover { color: var(--primary); border-bottom-color: var(--primary); }
+.search-btn:hover { color: #171717; }
 
 .card-head {
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;
-  gap: 6px;
+  gap: 8px;
   font-size: 12px;
-  color: var(--text-muted);
+  color: #6b6b6b;
   margin-bottom: 6px;
 }
-.dot-sep { color: #c9c2b4; }
+.sep { color: #6b6b6b; }
+.src-name {
+  font-weight: 500;
+  color: #6b6b6b;
+  font-size: 12px;
+}
+.pub-time { color: #6b6b6b; font-size: 12px; }
+.meta-extra { color: #6b6b6b; font-size: 12px; }
 .badge {
   display: inline-block;
   padding: 1px 6px;
@@ -336,12 +345,6 @@ a:hover { text-decoration: underline; }
   color: var(--primary);
 }
 .badge-hot { color: var(--primary); border-color: var(--primary); }
-.src-name {
-  font-weight: 600;
-  color: var(--text-muted);
-  font-size: 12px;
-}
-.pub-time { color: var(--text-muted); font-size: 12px; }
 .fetched-time {
   color: var(--text-muted);
   font-size: 11px;
@@ -360,7 +363,7 @@ a:hover { text-decoration: underline; }
 .card-summary {
   margin: 8px 0 0;
   font-size: 14px;
-  color: #6b6b6b;
+  color: #404040;
   line-height: 1.6;
   font-family: system-ui, -apple-system, sans-serif;
   display: -webkit-box;
