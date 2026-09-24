@@ -536,4 +536,14 @@
   } else {
     applyFilters();
   }
+
+  // 移动端：展开/收起折叠的筛选区
+  var mobileFilterBtn = document.getElementById("mobile-filter-btn");
+  var mobileFilters = document.querySelector(".filters");
+  if (mobileFilterBtn && mobileFilters) {
+    mobileFilterBtn.addEventListener("click", function () {
+      var isOpen = mobileFilters.classList.toggle("open");
+      mobileFilterBtn.setAttribute("aria-expanded", isOpen ? "true" : "false");
+    });
+  }
 })();

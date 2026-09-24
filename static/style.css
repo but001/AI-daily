@@ -456,12 +456,42 @@ a:hover { text-decoration: underline; }
 }
 
 /* ── 响应式：移动端 ── */
-@media (max-width: 640px) {
+.mobile-filter-btn { display: none; }
+
+@media (max-width: 768px) {
+  /* 头部折叠：只留 Logo 与 Tab */
   .header-inner { flex-direction: column; align-items: flex-start; gap: 8px; }
+  .brand .tagline { display: none; }
   .top-nav { width: 100%; justify-content: flex-start; }
+
+  /* 隐藏更新/来源说明文字 */
+  .status-bar { display: none; }
+  .range-hint { display: none; }
+
+  /* 筛选收纳：默认折叠，点按钮展开 */
+  .mobile-filter-btn {
+    display: block;
+    width: 100%;
+    padding: 10px 12px;
+    margin: 8px 0 0;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    font-size: 14px;
+    text-align: center;
+    cursor: pointer;
+  }
+  .filters { display: none; margin-top: 0; }
+  .filters.open { display: block; }
+  .filters.open .search-wrap { margin-top: 10px; }
+
   .filter-row { flex-direction: column; align-items: stretch; }
   .filter-row .clear-btn { margin-left: 0; }
-  .card-title { font-size: 18px; }
-  .copy-md { margin-left: 0; }
   .date-popover { min-width: auto; left: 0; right: 0; }
+
+  /* 字号强制约束：英文标题固定 Georgia，行高 1.5 */
+  .card-title { font-size: 18px; font-family: Georgia, serif; }
+  .news-card.hot:first-child .card-title { font-size: 22px; }
+  .card-summary { font-size: 14px; line-height: 1.5; }
+  .copy-md { margin-left: 0; }
 }
