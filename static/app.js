@@ -547,22 +547,21 @@
     });
   }
 
-  // 元数据零值兜底：points/comments <= 0 或为空时不显示"分/评论"（含历史脏数据）；
-  // 全为 0/无附加信息时，来源与时间之间改用 · 连接
+  // 元数据拼接（重写）：来源 / 时间 [/ N 分] [/ N 评论]
+  // points/comments 为 0 或空时省略，绝不出现空的 "/ 分 / 评论" 占位
   document.querySelectorAll(".news-card").forEach(function (card) {
     var head = card.querySelector(".card-head");
     if (!head) return;
-    head.querySelectorAll(".meta-extra").forEach(function (el) {
-      var text = (el.textContent || "").trim();
-      if (/^0\s*(分|评论)$/.test(text)) {
-        var prev = el.previousElementSibling;
-        if (prev && prev.className === "sep") prev.remove();
-        el.remove();
-      }
-    });
-    if (head.querySelectorAll(".meta-extra").length === 0) {
-      var sep = head.querySelector(".sep");
-      if (sep) sep.textContent = "·";
-    }
+    var source = head.querySelector(".src-name");
+    var time = head.querySelector(".pub-time");
+    var metaParts = [
+      source ? source.textContent.trim() : "",
+      time ? time.textContent.trim() : ""
+    ].filter(Boolean);
+    var pts = parseInt(head.getAttribute("data-points") || "", 10);
+    var cms = parseInt(head.getAttribute("data-comments") || "", 10);
+    if (!isNaN(pts) && pts > 0) metaParts.push(pts + " 分");
+    if (!isNaN(cms) && cms > 0) metaParts.push(cms + " 评论");
+    head.textContent = metaParts.join(" / ");
   });
 })();
