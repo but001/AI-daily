@@ -1,4 +1,11 @@
 {
+  "2026-09-30T06:13:49+00:00": {
+    "openai": "ok",
+    "techcrunch": "ok",
+    "hf_blog": "ok",
+    "hackernews": "ok",
+    "arxiv": "ok"
+  },
   "2026-09-29T06:30:05+00:00": {
     "openai": "ok",
     "techcrunch": "ok",
@@ -191,10 +198,6 @@
     "huggingface_papers": "ok"
   },
   "2026-09-14T12:16:54+00:00": {
-    "arxiv": "ok",
-    "huggingface_papers": "ok"
-  },
-  "2026-09-14T11:25:13+00:00": {
     "arxiv": "ok",
     "huggingface_papers": "ok"
   }
