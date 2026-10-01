@@ -1,4 +1,11 @@
 {
+  "2026-10-01T06:44:34+00:00": {
+    "openai": "ok",
+    "techcrunch": "ok",
+    "hf_blog": "ok",
+    "hackernews": "ok",
+    "arxiv": "ok"
+  },
   "2026-09-30T06:13:49+00:00": {
     "openai": "ok",
     "techcrunch": "ok",
@@ -194,10 +201,6 @@
     "baai_hub": "fail: HTTPError: 404 Client Error: Not Found for url: https://hub.baai.ac.cn/rss"
   },
   "2026-09-14T12:26:11+00:00": {
-    "arxiv": "ok",
-    "huggingface_papers": "ok"
-  },
-  "2026-09-14T12:16:54+00:00": {
     "arxiv": "ok",
     "huggingface_papers": "ok"
   }
