@@ -1,4 +1,11 @@
 {
+  "2026-10-03T05:57:41+00:00": {
+    "openai": "ok",
+    "techcrunch": "ok",
+    "hf_blog": "ok",
+    "hackernews": "ok",
+    "arxiv": "ok"
+  },
   "2026-10-02T06:32:50+00:00": {
     "openai": "ok",
     "techcrunch": "ok",
@@ -201,10 +208,5 @@
     "hf_blog": "ok",
     "hackernews": "ok",
     "arxiv": "fail: HTTPError: 429 Client Error: Unknown Error for url: https://export.arxiv.org/api/query?search_query=cat:cs.AI&start=0&max_results=50&sortBy=submittedDate&sortOrder=descending"
-  },
-  "2026-09-14T13:01:51+00:00": {
-    "arxiv": "fail: HTTPError: 429 Client Error: Unknown Error for url: https://export.arxiv.org/api/query?search_query=cat:cs.AI&start=0&max_results=50&sortBy=submittedDate&sortOrder=descending",
-    "huggingface_papers": "ok",
-    "baai_hub": "fail: HTTPError: 404 Client Error: Not Found for url: https://hub.baai.ac.cn/rss"
   }
 }
