@@ -1,4 +1,11 @@
 {
+  "2026-10-06T07:04:46+00:00": {
+    "openai": "ok",
+    "techcrunch": "ok",
+    "hf_blog": "ok",
+    "hackernews": "ok",
+    "arxiv": "ok"
+  },
   "2026-10-05T06:28:34+00:00": {
     "openai": "ok",
     "techcrunch": "ok",
@@ -196,13 +203,6 @@
     "arxiv": "fail: HTTPError: 429 Client Error: Unknown Error for url: https://export.arxiv.org/api/query?search_query=cat:cs.AI&start=0&max_results=50&sortBy=submittedDate&sortOrder=descending"
   },
   "2026-09-15T02:45:02+00:00": {
-    "openai": "ok",
-    "techcrunch": "ok",
-    "hf_blog": "ok",
-    "hackernews": "ok",
-    "arxiv": "fail: ReadTimeout: HTTPSConnectionPool(host='export.arxiv.org', port=443): Read timed out. (read timeout=20)"
-  },
-  "2026-09-15T02:39:08+00:00": {
     "openai": "ok",
     "techcrunch": "ok",
     "hf_blog": "ok",
