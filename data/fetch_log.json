@@ -1,4 +1,11 @@
 {
+  "2026-10-08T06:56:02+00:00": {
+    "openai": "ok",
+    "techcrunch": "ok",
+    "hf_blog": "ok",
+    "hackernews": "ok",
+    "arxiv": "ok"
+  },
   "2026-10-07T06:46:34+00:00": {
     "openai": "ok",
     "techcrunch": "ok",
@@ -201,12 +208,5 @@
     "hf_blog": "ok",
     "hackernews": "ok",
     "arxiv": "ok"
-  },
-  "2026-09-15T02:54:16+00:00": {
-    "openai": "ok",
-    "techcrunch": "ok",
-    "hf_blog": "ok",
-    "hackernews": "ok",
-    "arxiv": "fail: HTTPError: 429 Client Error: Unknown Error for url: https://export.arxiv.org/api/query?search_query=cat:cs.AI&start=0&max_results=50&sortBy=submittedDate&sortOrder=descending"
   }
 }
